@@ -30,7 +30,7 @@
 
     <%= render 'shared/flash_messages' %>
 
-    <main class="<%= logged_in? ? 'mt-16' : '' %> container mx-auto px-5 flex">
+    <main class="<%= logged_in? ? 'mt-16' : '' %>">
       <%= yield %>
     </main>
   </body>
