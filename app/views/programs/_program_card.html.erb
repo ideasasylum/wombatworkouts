@@ -1,0 +1,99 @@
+<%
+# Program Card Partial
+#
+# Displays a program card with collapsible details
+# Used on both dashboard and programs index pages
+#
+# @param program [Program] The program to display
+# @param show_collapsible [Boolean] Whether to show collapsible section (default: true)
+
+show_collapsible = local_assigns.fetch(:show_collapsible, true)
+-%>
+
+<div class="bg-white border border-[rgb(204,204,204)] p-6" data-controller="<%= 'collapsible' if show_collapsible %>">
+  <!-- Title and Start button row -->
+  <div class="flex items-start justify-between mb-2">
+    <%= link_to program_path(program), class: "block group flex-1" do %>
+      <h3 class="text-xl font-semibold text-gray-900 group-hover:text-[rgb(107,114,128)] transition-colors"><%= program.title %></h3>
+    <% end %>
+
+    <%= render 'shared/button',
+      text: 'Start',
+      url: new_workout_path(program_id: program.uuid),
+      type: :primary,
+      size: :small,
+      icon: 'play',
+      icon_position: :left,
+      html_options: { class: 'md:w-32 flex-shrink-0 ml-4' } %>
+  </div>
+
+  <!-- Description (only show if present) -->
+  <% if program.description.present? %>
+    <p class="text-body text-[rgb(107,114,128)] mb-4 line-clamp-3"><%= truncate(program.description, length: 120) %></p>
+  <% end %>
+
+  <% if show_collapsible %>
+    <!-- More details and actions row -->
+    <div class="flex items-center justify-between <%= 'mt-4' unless program.description.present? %>">
+      <!-- More details toggle -->
+      <button
+        type="button"
+        data-action="click->collapsible#toggle"
+        class="inline-flex items-center text-sm text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)] transition-colors focus:outline-none"
+      >
+        <span class="mr-1">More details</span>
+        <%= render 'shared/icons/chevron_down', class: 'w-4 h-4 transition-transform duration-200', data: { collapsible_target: 'arrow' } %>
+      </button>
+
+      <!-- Edit and Delete icon buttons -->
+      <div class="flex items-center space-x-2">
+        <%= render 'shared/button',
+          url: edit_program_path(program),
+          type: :icon_only,
+          icon: 'pencil',
+          html_options: { 'aria-label': 'Edit program' } %>
+
+        <%= button_to program_path(program),
+          method: :delete,
+          form: { data: { turbo_confirm: "Are you sure you want to delete '#{program.title}'?" } },
+          class: "inline-flex items-center justify-center p-2 rounded-sm text-[rgb(26,26,26)] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900 min-h-[44px] min-w-[44px]",
+          'aria-label': 'Delete program' do %>
+          <%= render 'shared/icons/trash', class: 'w-5 h-5' %>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Collapsible exercise summary -->
+    <div class="hidden mt-4 pt-4 border-t border-[rgb(204,204,204)]" data-collapsible-target="content">
+      <% if program.exercises.any? %>
+        <h4 class="text-sm font-medium text-[rgb(26,26,26)] mb-2">Exercises</h4>
+        <ul class="space-y-1">
+          <% program.exercises.order(:position).each do |exercise| %>
+            <li class="text-sm text-[rgb(107,114,128)]">
+              <%= exercise.name %> (<%= exercise.repeat_count %> sets)
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p class="text-sm text-[rgb(107,114,128)] italic">No exercises yet</p>
+      <% end %>
+    </div>
+  <% else %>
+    <!-- Simple actions row without collapsible (programs index) -->
+    <div class="flex items-center justify-end space-x-2 <%= 'mt-4' unless program.description.present? %>">
+      <%= render 'shared/button',
+        url: edit_program_path(program),
+        type: :icon_only,
+        icon: 'pencil',
+        html_options: { 'aria-label': 'Edit program' } %>
+
+      <%= button_to program_path(program),
+        method: :delete,
+        form: { data: { turbo_confirm: "Are you sure you want to delete '#{program.title}'?" } },
+        class: "inline-flex items-center justify-center p-2 rounded-sm text-[rgb(26,26,26)] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900 min-h-[44px] min-w-[44px]",
+        'aria-label': 'Delete program' do %>
+        <%= render 'shared/icons/trash', class: 'w-5 h-5' %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

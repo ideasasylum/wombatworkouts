@@ -5,24 +5,25 @@
 # Matches dashboard programs section design
 %>
 
-<div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 w-full">
-  <div class="max-w-4xl mx-auto">
-    <div class="flex justify-between items-center mb-8">
+<div class="min-h-screen py-6 md:py-12 px-4 sm:px-6 lg:px-8 w-full">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
       <h1 class="text-h1 text-[rgb(26,26,26)]">Programs</h1>
       <% if @programs.any? %>
         <%= render 'shared/button',
           text: 'New',
           url: new_program_path,
           type: :secondary,
-          size: :base,
+          size: :small,
           icon: 'plus',
-          icon_position: :left %>
+          icon_position: :left,
+          html_options: { class: 'md:w-32 !bg-[rgb(237,242,247)]' } %>
       <% end %>
     </div>
 
     <% if @programs.empty? %>
       <!-- Empty state -->
-      <div class="bg-white rounded-sm shadow-sm p-12 text-center">
+      <div class="bg-white border border-[rgb(204,204,204)] p-12 text-center">
         <div class="max-w-md mx-auto">
           <h2 class="text-h2 text-[rgb(26,26,26)] mb-2">Create Your First Program</h2>
           <p class="text-body text-[rgb(107,114,128)] mb-6">Get started by creating your first exercise program to organize your workouts</p>
@@ -39,50 +40,7 @@
       <!-- Program cards -->
       <div class="space-y-4">
         <% @programs.each do |program| %>
-          <div class="bg-white rounded-sm shadow-sm p-6 hover:shadow-md transition-shadow">
-            <!-- Program title (clickable) -->
-            <%= link_to program_path(program), class: "block group" do %>
-              <h3 class="text-h3 text-[rgb(26,26,26)] mb-2 group-hover:text-[rgb(107,114,128)] transition-colors"><%= program.title %></h3>
-            <% end %>
-
-            <!-- Description -->
-            <% if program.description.present? %>
-              <p class="text-body text-[rgb(107,114,128)] mb-4"><%= truncate(program.description, length: 150) %></p>
-            <% else %>
-              <p class="text-body text-[rgb(107,114,128)] italic mb-4">No description</p>
-            <% end %>
-
-            <!-- Actions row -->
-            <div class="flex items-center justify-between">
-              <!-- Start button -->
-              <div>
-                <%= render 'shared/button',
-                  text: 'Start',
-                  url: new_workout_path(program_id: program.uuid),
-                  type: :primary,
-                  size: :small,
-                  icon: 'play',
-                  icon_position: :left %>
-              </div>
-
-              <!-- Edit and Delete icon buttons -->
-              <div class="flex items-center space-x-2">
-                <%= render 'shared/button',
-                  url: edit_program_path(program),
-                  type: :icon_only,
-                  icon: 'pencil',
-                  html_options: { 'aria-label': 'Edit program' } %>
-
-                <%= button_to program_path(program),
-                  method: :delete,
-                  form: { data: { turbo_confirm: "Are you sure you want to delete '#{program.title}'? This action cannot be undone." } },
-                  class: "inline-flex items-center justify-center p-2 rounded-sm text-[rgb(26,26,26)] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900 min-h-[44px] min-w-[44px]",
-                  'aria-label': 'Delete program' do %>
-                  <%= render 'shared/icons/trash', class: 'w-5 h-5' %>
-                <% end %>
-              </div>
-            </div>
-          </div>
+          <%= render 'program_card', program: program, show_collapsible: false %>
         <% end %>
       </div>
     <% end %>
