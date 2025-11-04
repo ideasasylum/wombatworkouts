@@ -1,0 +1,44 @@
+# Litestream configuration for continuous SQLite database replication
+# This file will be uploaded to /etc/litestream.yml on the server
+#
+# IMPORTANT: Before uploading this file to your server, replace REPLACE_WITH_YOUR_S3_BUCKET_NAME
+# with your actual cloud storage bucket name from Task Group 3.
+#
+# Supported S3-compatible storage providers:
+# - AWS S3: s3://bucket-name/path
+# - Backblaze B2: s3://bucket-name/path (with custom endpoint)
+# - DigitalOcean Spaces: s3://bucket-name/path (with custom endpoint)
+# - Wasabi: s3://bucket-name/path (with custom endpoint)
+#
+# For non-AWS S3-compatible storage, you may need to add endpoint configuration.
+# See: https://litestream.io/guides/
+
+# Access key credentials are provided via environment variables:
+# - LITESTREAM_ACCESS_KEY_ID
+# - LITESTREAM_SECRET_ACCESS_KEY
+# These are set in .kamal/secrets and injected by Kamal
+
+dbs:
+  # Primary application database
+  - path: /data/storage/production.sqlite3
+    replicas:
+      - url: s3://wombatworkouts-backup/production.sqlite3
+      - endpoint: https://b2b65bb52336e9cac6be1fb8d6422aa8.r2.cloudflarestorage.com/
+
+  # Action Cable database (WebSocket connections)
+  - path: /data/storage/production_cable.sqlite3
+    replicas:
+      - url: s3://wombatworkouts-backup/production_cable.sqlite3
+      - endpoint: https://b2b65bb52336e9cac6be1fb8d6422aa8.r2.cloudflarestorage.com/
+
+  # Rails cache database
+  - path: /data/storage/production_cache.sqlite3
+    replicas:
+      - url: s3://wombatworkouts-backup/production_cache.sqlite3
+      - endpoint: https://b2b65bb52336e9cac6be1fb8d6422aa8.r2.cloudflarestorage.com/
+
+  # Solid Queue database (background jobs)
+  - path: /data/storage/production_queue.sqlite3
+    replicas:
+      - url: s3://wombatworkouts-backup/production_queue.sqlite3
+      - endpoint: https://b2b65bb52336e9cac6be1fb8d6422aa8.r2.cloudflarestorage.com/
