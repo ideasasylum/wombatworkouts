@@ -34,7 +34,11 @@
       <% @workout.exercises_data.each_with_index do |exercise, index| %>
         <div class="bg-[rgb(249,250,251)] rounded-sm p-4 flex items-center justify-between">
           <div class="flex-1">
-            <h3 class="text-base font-medium text-[rgb(26,26,26)] mb-1"><%= exercise['name'] %></h3>
+            <% if exercise['skipped'] %>
+              <h3 class="text-base line-through font-medium text-[rgb(26,26,26)] mb-1"><%= exercise['name'] %></h3>
+            <% else %>
+              <h3 class="text-base font-medium text-[rgb(26,26,26)] mb-1"><%= exercise['name'] %></h3>
+            <% end %>
           </div>
           <div class="ml-4">
             <% if exercise['completed'] %>
