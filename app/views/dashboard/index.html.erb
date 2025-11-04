@@ -11,14 +11,16 @@
     <section>
       <div class="flex justify-between items-center mb-6">
         <h1 class="text-h1 text-[rgb(26,26,26)]">Programs</h1>
-        <%= render 'shared/button',
-          text: 'New',
-          url: new_program_path,
-          type: :secondary,
-          size: :small,
-          icon: 'plus',
-          icon_position: :left,
-          html_options: { class: 'md:w-32 !bg-[rgb(237,242,247)]' } %>
+        <% if @programs.any? %>
+          <%= render 'shared/button',
+            text: 'New',
+            url: new_program_path,
+            type: :secondary,
+            size: :small,
+            icon: 'plus',
+            icon_position: :left,
+            html_options: { class: 'md:w-32 !bg-[rgb(237,242,247)]' } %>
+        <% end %>
       </div>
 
       <% if @programs.empty? %>
