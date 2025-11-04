@@ -35,17 +35,15 @@
         <div class="bg-[rgb(249,250,251)] rounded-sm p-4 flex items-center justify-between">
           <div class="flex-1">
             <h3 class="text-base font-medium text-[rgb(26,26,26)] mb-1"><%= exercise['name'] %></h3>
-            <p class="text-sm text-[rgb(107,114,128)]">reps</p>
           </div>
           <div class="ml-4">
             <% if exercise['completed'] %>
-              <div class="inline-flex items-center px-3 py-1 rounded-sm bg-[rgb(243,244,246)] text-sm text-[rgb(26,26,26)]">
+              <div class="inline-flex items-center px-3 py-1 rounded-sm text-sm text-[rgb(26,26,26)]">
                 <%= render 'shared/icons/check', class: 'w-4 h-4 mr-1' %>
-                Completed
               </div>
             <% elsif exercise['skipped'] %>
-              <div class="inline-flex items-center px-3 py-1 rounded-sm bg-[rgb(243,244,246)] text-sm text-[rgb(107,114,128)]">
-                Skipped
+              <div class="inline-flex items-center px-3 py-1 rounded-sm text-sm text-[rgb(107,114,128)]">
+                <%= render 'shared/icons/skip_forward', class: 'w-4 h-4 mr-1' %>
               </div>
             <% end %>
           </div>
@@ -56,14 +54,6 @@
 
   <!-- Action buttons at bottom -->
   <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-    <!-- Browse Programs - secondary/outline style with list icon -->
-    <%= link_to programs_path, class: "flex-1 inline-flex items-center justify-center border font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors rounded-sm px-6 py-3 text-base min-h-[44px] border-[rgb(26,26,26)] border text-[rgb(26,26,26)] bg-white hover:bg-gray-50 focus:ring-gray-900" do %>
-      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-      </svg>
-      Browse Programs
-    <% end %>
-
     <!-- Done - primary/solid black style -->
     <%= link_to programs_path, class: "flex-1 inline-flex items-center justify-center border font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors rounded-sm px-6 py-3 text-base min-h-[44px] border-transparent text-white bg-[rgb(26,26,26)] hover:opacity-90 focus:ring-gray-900" do %>
       Done
