@@ -48,7 +48,7 @@ show_collapsible = local_assigns.fetch(:show_collapsible, true)
       <!-- Edit and Delete icon buttons -->
       <div class="flex items-center space-x-2">
         <%= render 'shared/button',
-          url: edit_program_path(program),
+          url: program_path(program),
           type: :icon_only,
           icon: 'pencil',
           html_options: { 'aria-label': 'Edit program' } %>
@@ -82,7 +82,7 @@ show_collapsible = local_assigns.fetch(:show_collapsible, true)
     <!-- Simple actions row without collapsible (programs index) -->
     <div class="flex items-center justify-end space-x-2 <%= 'mt-4' unless program.description.present? %>">
       <%= render 'shared/button',
-        url: edit_program_path(program),
+        url: program_path(program),
         type: :icon_only,
         icon: 'pencil',
         html_options: { 'aria-label': 'Edit program' } %>
