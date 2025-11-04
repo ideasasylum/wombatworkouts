@@ -1,29 +1,89 @@
 <%
 # Navigation Bar Component
 #
-# Main navigation bar for authenticated users
-# Shows logo, navigation links, user email, and logout button
+# Main navigation bar for authenticated users with minimalist design
+# Shows logo, navigation links (desktop), user email, and logout button
+# Mobile: Shows hamburger menu icon with slide-out drawer
 #
 # No parameters needed - uses current_user from controller
 %>
 
-<nav class="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+<nav class="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50" data-controller="mobile-menu">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-16">
+      <!-- Logo and Navigation Links (Desktop) -->
       <div class="flex items-center space-x-8">
+        <!-- Logo -->
         <div class="flex-shrink-0">
-          <%= link_to "Wombat Workouts", root_path, class: "text-xl font-bold text-indigo-600" %>
+          <%= link_to "Wombat Workouts", root_path, class: "text-h1 text-[rgb(26,26,26)]" %>
         </div>
-        <%= link_to "Dashboard", dashboard_path, class: "text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors" %>
-        <%= link_to "Programs", programs_path, class: "text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors" %>
+
+        <!-- Desktop Navigation Links (hidden on mobile below md:768px) -->
+        <div class="hidden md:flex items-center space-x-6">
+          <%= link_to "Dashboard", dashboard_path, class: "text-button text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)] transition-colors" %>
+          <%= link_to "Programs", programs_path, class: "text-button text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)] transition-colors" %>
+        </div>
       </div>
+
+      <!-- Right Side: User Info and Logout (Desktop) / Hamburger Menu (Mobile) -->
       <div class="flex items-center space-x-4">
-        <span class="text-sm text-gray-600 hidden sm:inline"><%= current_user.email %></span>
-        <%= button_to "Log out",
-          logout_path,
-          method: :delete,
-          class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200",
-          form: { data: { turbo_confirm: "Are you sure you want to log out?" } } %>
+        <!-- Desktop User Email and Logout (hidden on mobile) -->
+        <div class="hidden md:flex items-center space-x-4">
+          <span class="text-sm text-[rgb(107,114,128)]"><%= current_user.email %></span>
+          <%= button_to "Log out",
+            logout_path,
+            method: :delete,
+            class: "inline-flex items-center px-4 py-2 border-transparent text-button text-white bg-[rgb(26,26,26)] hover:opacity-90 rounded-sm transition-colors min-h-[44px]",
+            form: { data: { turbo_confirm: "Are you sure you want to log out?" } } %>
+        </div>
+
+        <!-- Mobile Hamburger Menu Icon (visible below md:768px) -->
+        <button type="button"
+                class="md:hidden inline-flex items-center justify-center p-2 rounded-sm text-[rgb(26,26,26)] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-900 min-h-[44px] min-w-[44px]"
+                aria-label="Open menu"
+                data-action="click->mobile-menu#toggle">
+          <%= render "shared/icons/menu", class: "w-6 h-6" %>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Overlay and Drawer -->
+  <div class="hidden md:hidden" data-mobile-menu-target="drawer">
+    <!-- Backdrop overlay -->
+    <div class="fixed inset-0 bg-black bg-opacity-25 z-40" data-action="click->mobile-menu#close"></div>
+
+    <!-- Drawer panel - slides in from right -->
+    <div class="fixed inset-y-0 right-0 max-w-xs w-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out" data-drawer-panel>
+      <div class="flex flex-col h-full">
+        <!-- Close button -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-200">
+          <span class="text-h2 text-[rgb(26,26,26)]">Menu</span>
+          <button type="button"
+                  class="inline-flex items-center justify-center p-2 rounded-sm text-[rgb(26,26,26)] hover:bg-gray-100 min-h-[44px] min-w-[44px]"
+                  aria-label="Close menu"
+                  data-action="click->mobile-menu#close">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Navigation links -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-2">
+          <%= link_to "Dashboard", dashboard_path, class: "block text-body text-[rgb(26,26,26)] hover:bg-gray-100 p-3 rounded-sm", data: { action: "click->mobile-menu#close" } %>
+          <%= link_to "Programs", programs_path, class: "block text-body text-[rgb(26,26,26)] hover:bg-gray-100 p-3 rounded-sm", data: { action: "click->mobile-menu#close" } %>
+        </div>
+
+        <!-- User info and logout -->
+        <div class="border-t border-gray-200 p-4 space-y-4">
+          <div class="text-sm text-[rgb(107,114,128)]"><%= current_user.email %></div>
+          <%= button_to "Log out",
+            logout_path,
+            method: :delete,
+            class: "w-full inline-flex items-center justify-center px-4 py-3 border-transparent text-button text-white bg-[rgb(26,26,26)] hover:opacity-90 rounded-sm transition-colors min-h-[44px]",
+            form: { data: { turbo_confirm: "Are you sure you want to log out?" } } %>
+        </div>
       </div>
     </div>
   </div>

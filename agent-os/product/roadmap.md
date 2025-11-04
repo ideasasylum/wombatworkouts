@@ -20,7 +20,7 @@ This roadmap outlines the feature development sequence for Wombat Workouts, orde
 
 7. [x] **Mobile-Responsive Exercise Interface** — Implement mobile-first UI using Tailwind CSS with large touch targets, clear typography, and optimized layout for phone screens. Exercise view displays video embeds, descriptions with proper formatting, and prominent completion buttons. Test across device sizes. `M`
 
-8. [ ] **Program Library & Dashboard** — Build user dashboard displaying all programs they've created (with edit/delete actions) and programs they've followed (with quick access to start new session). Implement basic filtering and sorting by recent activity. `S`
+8. [x] **Program Library & Dashboard** — Build user dashboard displaying all programs they've created (with edit/delete actions) and programs they've followed (with quick access to start new session). Implement basic filtering and sorting by recent activity. Dashboard shows 5 most recent programs and workouts with "View All" links when more exist. `S`
 
 9. [~] **Exercise Video Embed Optimization** — Enhance video integration to support multiple platforms (YouTube, Vimeo, etc.) with proper responsive embeds. Implement video preview validation and fallback for invalid URLs. Consider autoplay and mute options for better UX. `S` _(Not necessary - YouTube and Instagram support sufficient)_
 
@@ -32,10 +32,31 @@ This roadmap outlines the feature development sequence for Wombat Workouts, orde
 
 13. [ ] **Production Deployment with Kamal 2** — Deploy the application to production server using Kamal 2 for zero-downtime deployments. Configure environment variables, SSL certificates, database migrations, and health checks. Set up deployment workflow for automated releases. `M`
 
-> Notes
-> - Items 1-8 constitute the MVP (Minimum Viable Product) delivering core creator-follower workflow
-> - Items 9-10 are polish enhancements improving exercise content quality
-> - Items 11-12 are advanced features requiring background processing and PWA infrastructure
-> - Item 13 handles production deployment infrastructure
-> - Exercise timers intentionally omitted from initial roadmap - can be added as simple client-side feature later
-> - SQLite is sufficient for MVP; consider scaling strategy if concurrent usage grows significantly
+---
+
+## Development Status
+
+### Completed (MVP Ready)
+Items 1-8, 10 constitute the core MVP and are **COMPLETE**. The application delivers the full creator-follower workflow:
+- WebAuthn passwordless authentication
+- Program creation and management with exercises
+- UUID-based sharing for frictionless access
+- Workout session tracking with exercise completion
+- Mobile-responsive design throughout
+- Dashboard showing recent programs and workouts
+- Exercise description formatting with markdown support
+
+### Next Steps
+The MVP is functional and ready for user testing. Remaining features are enhancements:
+
+**Enhancement Features:**
+- Item 11: Scheduled reminders for program adherence
+- Item 12: PWA installation for native-like experience
+
+**Infrastructure:**
+- Item 13: Production deployment setup
+
+### Notes
+- Exercise timers intentionally omitted from initial roadmap - can be added as simple client-side feature later
+- SQLite is sufficient for MVP; consider scaling strategy if concurrent usage grows significantly
+- Video embed optimization (item 9) deemed unnecessary - current YouTube/Instagram support is sufficient

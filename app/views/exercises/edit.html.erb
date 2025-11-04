@@ -1,5 +1,5 @@
 <%= turbo_frame_tag "exercise-#{@exercise.id}" do %>
-  <div class="bg-gray-50 rounded-lg p-6 mb-3">
+  <div class="bg-white rounded-sm shadow-sm p-6 mb-3">
     <%= render 'exercises/form', program: @program, exercise: @exercise %>
   </div>
 <% end %>

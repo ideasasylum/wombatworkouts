@@ -1,0 +1,44 @@
+<%
+# Card Component
+#
+# A reusable card wrapper with minimalist styling matching the design system
+#
+# @param padding [String] Padding size - 'none', 'sm', 'base', 'lg' (default: 'base')
+# @param html_options [Hash] Additional HTML options (class, data, id, etc.)
+# @param content [Block] Card content passed as block
+
+padding = local_assigns.fetch(:padding, 'base')
+html_options = local_assigns.fetch(:html_options, {})
+
+# Base card classes
+base_classes = "bg-white rounded-sm shadow-sm"
+
+# Padding classes
+padding_classes = case padding
+when 'none'
+  ""
+when 'sm'
+  "p-4"
+when 'lg'
+  "p-8"
+else # 'base'
+  "p-6"
+end
+
+# Get custom class if provided
+custom_class = html_options.is_a?(Hash) ? (html_options[:class] || html_options["class"]) : nil
+
+# Merge all classes
+final_classes = [base_classes, padding_classes, custom_class].compact.join(" ")
+
+# Build final options hash
+if html_options.is_a?(Hash)
+  final_html_options = html_options.except(:class, "class").merge(class: final_classes)
+else
+  final_html_options = {class: final_classes}
+end
+%>
+
+<div <%= raw final_html_options.map { |k, v| "#{k}=\"#{v}\"" }.join(" ") %>>
+  <%= yield %>
+</div>

@@ -1,32 +1,51 @@
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full space-y-8">
-    <div class="text-center">
-      <h2 class="text-3xl font-extrabold text-gray-900">
-        Create your account
-      </h2>
-      <p class="mt-2 text-sm text-gray-600">
-        Already have an account?
-        <%= link_to "Sign in", signin_path, class: "font-medium text-indigo-600 hover:text-indigo-500" %>
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full">
+    <%# Header with logo and tagline %>
+    <div class="text-center mb-8">
+      <h1 class="text-h1 text-[rgb(26,26,26)] mb-2">
+        Wombat Workouts
+      </h1>
+      <p class="text-body text-[rgb(107,114,128)]">
+        Track your exercises
       </p>
     </div>
 
-    <%= turbo_frame_tag "signup_flow" do %>
-      <%= form_with url: create_signup_path, method: :post, class: "mt-8 space-y-6" do |f| %>
-        <div class="rounded-md shadow-sm -space-y-px">
+    <%# White card container for form %>
+    <div class="bg-white rounded-sm shadow-sm p-8">
+      <%= turbo_frame_tag "signup_flow" do %>
+        <%= form_with url: create_signup_path, method: :post, class: "space-y-6" do |f| %>
+          <%# Email input field %>
           <div>
-            <%= f.label :email, "Email address", class: "sr-only" %>
             <%= f.email_field :email,
                   required: true,
                   autofocus: true,
-                  placeholder: "Email address",
-                  class: "appearance-none rounded-lg relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 text-base" %>
+                  placeholder: "Email",
+                  class: "form-input" %>
           </div>
-        </div>
 
-        <div>
-          <%= f.submit "Continue", class: "group relative w-full flex justify-center py-3 px-4 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors" %>
-        </div>
+          <%# Action buttons - side by side %>
+          <div class="flex gap-3">
+            <%# Sign Up button - outline style with user-plus icon %>
+            <%= render 'shared/button',
+                  text: 'Sign Up',
+                  url: '#',
+                  type: :secondary,
+                  icon: 'user_plus',
+                  html_options: {
+                    onclick: "this.closest('form').requestSubmit(); return false;",
+                    class: 'flex-1'
+                  } %>
+
+            <%# Sign In button - solid style with arrow-right icon %>
+            <%= render 'shared/button',
+                  text: 'Sign In',
+                  url: signin_path,
+                  type: :primary,
+                  icon: 'arrow_right',
+                  html_options: { class: 'flex-1' } %>
+          </div>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   </div>
 </div>

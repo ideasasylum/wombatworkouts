@@ -1,1 +1,165 @@
 @import "tailwindcss";
+
+/* Import Inter font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Tailwind Theme Configuration */
+@theme {
+  /* Font Family */
+  --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Custom Colors */
+  --color-background: rgb(237, 242, 247);
+  --color-surface: rgb(255, 255, 255);
+  --color-text-primary: rgb(26, 26, 26);
+  --color-text-secondary: rgb(107, 114, 128);
+  --color-border: rgb(229, 231, 235);
+  --color-button-primary: rgb(26, 26, 26);
+
+  /* Border Radius - Override defaults to 2px */
+  --radius-sm: 2px;
+  --radius-DEFAULT: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
+}
+
+/* CSS Custom Properties - Design System Tokens */
+:root {
+  /* Color System */
+  --color-background: rgb(237, 242, 247);
+  --color-surface: rgb(255, 255, 255);
+  --color-text-primary: rgb(26, 26, 26);
+  --color-text-secondary: rgb(107, 114, 128);
+  --color-border: rgb(229, 231, 235);
+  --color-button-primary-bg: rgb(26, 26, 26);
+  --color-button-primary-text: rgb(255, 255, 255);
+
+  /* Typography Scale */
+  --font-family: 'Inter', sans-serif;
+  --font-size-h1: 18px;
+  --font-weight-h1: 700;
+  --line-height-h1: 28px;
+  --font-size-h2: 16px;
+  --font-weight-h2: 600;
+  --line-height-h2: 24px;
+  --font-size-h3: 16px;
+  --font-weight-h3: 500;
+  --line-height-h3: 24px;
+  --font-size-body: 16px;
+  --font-weight-body: 400;
+  --line-height-body: 24px;
+  --font-size-button: 14px;
+  --font-weight-button: 500;
+  --line-height-button: 20px;
+
+  /* Spacing & Layout */
+  --radius-minimal: 2px;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --spacing-card-padding: 1.5rem;
+  --spacing-section-gap: 2rem;
+}
+
+/* Apply Inter font globally */
+body {
+  font-family: var(--font-family);
+}
+
+/* Typography utilities using design tokens */
+.text-h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-h1);
+  line-height: var(--line-height-h1);
+}
+
+.text-h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-h2);
+  line-height: var(--line-height-h2);
+}
+
+.text-h3 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-h3);
+  line-height: var(--line-height-h3);
+}
+
+.text-body {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
+}
+
+.text-button {
+  font-size: var(--font-size-button);
+  font-weight: var(--font-weight-button);
+  line-height: var(--line-height-button);
+}
+
+/* Card component utilities */
+.card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-minimal);
+  box-shadow: var(--shadow-card);
+  padding: var(--spacing-card-padding);
+}
+
+/* Form Input Utilities - Minimalist Design System */
+.form-input,
+.form-textarea,
+.form-select {
+  appearance: none;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-minimal);
+  padding: 0.75rem 1rem;
+  width: 100%;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+  color: var(--color-text-primary);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--color-text-primary);
+  border-width: 2px;
+  padding: calc(0.75rem - 1px) calc(1rem - 1px); /* Adjust padding to prevent layout shift */
+}
+
+.form-input.error,
+.form-textarea.error,
+.form-select.error {
+  border-color: rgb(239, 68, 68); /* red-500 */
+}
+
+/* Form Label Utilities */
+.form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+/* Form Error Message */
+.form-error {
+  color: rgb(239, 68, 68); /* red-500 */
+  font-size: 14px;
+  margin-top: 0.25rem;
+}
+
+/* Override Tailwind defaults for minimal border radius */
+@layer utilities {
+  .rounded-minimal {
+    border-radius: var(--radius-minimal);
+  }
+}

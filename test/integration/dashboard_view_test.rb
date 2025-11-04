@@ -12,7 +12,7 @@ class DashboardViewTest < ActionDispatch::IntegrationTest
 
     get dashboard_path
     assert_response :success
-    assert_select "h2", text: "Recent Programs"
+    assert_select "h1", text: "Programs"
     assert_select "h3", text: "Test Program"
   end
 
@@ -68,13 +68,13 @@ class DashboardViewTest < ActionDispatch::IntegrationTest
     assert_select "a[href=?]", workouts_path, text: "View All Workouts"
   end
 
-  test "should show Start Workout button on program cards" do
+  test "should show Start button on program cards" do
     sign_in_as(@user)
 
     program = @user.programs.create!(title: "Test Program")
 
     get dashboard_path
     assert_response :success
-    assert_select "a[href=?]", new_workout_path(program_id: program.uuid), text: "Start Workout"
+    assert_select "a[href=?]", new_workout_path(program_id: program.uuid), text: "Start"
   end
 end

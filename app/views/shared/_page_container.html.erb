@@ -1,7 +1,7 @@
 <%
 # Page Container Component
 #
-# Standard page wrapper with gradient background and max-width container
+# Standard page wrapper with solid background and max-width container
 #
 # @param max_width [String] Maximum width - '2xl', '4xl', '7xl' (default: '4xl')
 # @param content [Block] Page content passed as block
@@ -18,7 +18,7 @@ else # '4xl'
 end
 %>
 
-<div class="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
   <div class="<%= max_width_class %> mx-auto">
     <%= yield %>
   </div>

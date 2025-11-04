@@ -1,75 +1,121 @@
-<div class="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 py-12 px-4 sm:px-6 lg:px-8">
+<%
+# Dashboard View
+#
+# Main dashboard showing recent programs and workouts
+# Uses minimalist card-based layout matching prototype design
+%>
+
+<div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 w-full">
   <div class="max-w-7xl mx-auto">
-    <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Dashboard</h1>
+    <!-- Programs Section -->
+    <section>
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-h1 text-[rgb(26,26,26)]">Programs</h1>
+        <%= render 'shared/button',
+          text: 'New',
+          url: new_program_path,
+          type: :secondary,
+          size: :base,
+          icon: 'plus',
+          icon_position: :left %>
+      </div>
 
-    <!-- Two-column layout: programs and workouts -->
-    <div class="grid gap-6 lg:grid-cols-2">
-
-      <!-- Programs Section (order-1 on desktop, order-2 on mobile) -->
-      <section class="order-2 lg:order-1">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">Recent Programs</h2>
-          <% if @programs.any? %>
+      <% if @programs.empty? %>
+        <!-- Empty state -->
+        <div class="bg-white rounded-sm shadow-sm p-12 text-center">
+          <div class="max-w-md mx-auto">
+            <h2 class="text-h2 text-[rgb(26,26,26)] mb-2">Create Your First Program</h2>
+            <p class="text-body text-[rgb(107,114,128)] mb-6">Get started by creating your first exercise program to organize your workouts</p>
             <%= render 'shared/button',
-              text: 'Create Program',
+              text: 'New Program',
               url: new_program_path,
               type: :primary,
-              size: :small %>
+              size: :base,
+              icon: 'plus',
+              icon_position: :left %>
+          </div>
+        </div>
+      <% else %>
+        <!-- Program cards -->
+        <div class="space-y-4">
+          <% @programs.each do |program| %>
+            <div class="bg-white rounded-sm shadow-sm p-6 hover:shadow-md transition-shadow">
+              <!-- Program title (clickable) -->
+              <%= link_to program_path(program), class: "block group" do %>
+                <h3 class="text-h3 text-[rgb(26,26,26)] mb-2 group-hover:text-[rgb(107,114,128)] transition-colors"><%= program.title %></h3>
+              <% end %>
+
+              <!-- Description -->
+              <% if program.description.present? %>
+                <p class="text-body text-[rgb(107,114,128)] mb-4 line-clamp-3"><%= truncate(program.description, length: 120) %></p>
+              <% else %>
+                <p class="text-body text-[rgb(107,114,128)] italic mb-4">No description</p>
+              <% end %>
+
+              <!-- Actions row -->
+              <div class="flex items-center justify-between">
+                <!-- Start button -->
+                <div>
+                  <%= render 'shared/button',
+                    text: 'Start',
+                    url: new_workout_path(program_id: program.uuid),
+                    type: :primary,
+                    size: :small,
+                    icon: 'play',
+                    icon_position: :left %>
+                </div>
+
+                <!-- Edit and Delete icon buttons -->
+                <div class="flex items-center space-x-2">
+                  <%= render 'shared/button',
+                    url: edit_program_path(program),
+                    type: :icon_only,
+                    icon: 'pencil',
+                    html_options: { 'aria-label': 'Edit program' } %>
+
+                  <%= button_to program_path(program),
+                    method: :delete,
+                    form: { data: { turbo_confirm: "Are you sure you want to delete '#{program.title}'?" } },
+                    class: "inline-flex items-center justify-center p-2 rounded-sm text-[rgb(26,26,26)] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-900 min-h-[44px] min-w-[44px]",
+                    'aria-label': 'Delete program' do %>
+                    <%= render 'shared/icons/trash', class: 'w-5 h-5' %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- View All Programs link (if more exist) -->
+          <% if @has_more_programs %>
+            <div class="text-center pt-2">
+              <%= link_to "View All Programs", programs_path, class: "text-body text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)] font-medium" %>
+            </div>
           <% end %>
         </div>
-
-        <% if @programs.empty? %>
-          <%= render 'shared/empty_state',
-            icon: 'document',
-            title: 'Create Your First Program',
-            description: 'Get started by creating your first exercise program to organize your workouts',
-            button_text: 'Create Program',
-            button_url: new_program_path %>
-        <% else %>
-          <!-- Program cards -->
-          <div class="space-y-4">
-            <% @programs.each do |program| %>
-              <%= render 'programs/card',
-                program: program,
-                show_start_workout: true,
-                show_actions: true,
-                show_owner_actions: true,
-                truncate_length: 120 %>
-            <% end %>
-
-            <!-- View All Programs link -->
-            <% if @has_more_programs %>
-              <div class="text-center pt-2">
-                <%= link_to "View All Programs", programs_path, class: "text-indigo-600 hover:text-indigo-700 font-medium" %>
-              </div>
-            <% end %>
-          </div>
-        <% end %>
-      </section>
-
-      <!-- Workouts Section (order-1 on mobile, order-2 on desktop) -->
-      <% if @workouts.any? %>
-        <section class="order-1 lg:order-2">
-          <div class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">Recent Workouts</h2>
-          </div>
-
-          <!-- Workout cards -->
-          <div class="space-y-4">
-            <% @workouts.each do |workout| %>
-              <%= render 'workouts/card', workout: workout, show_delete: false %>
-            <% end %>
-
-            <!-- View All Workouts link -->
-            <% if @has_more_workouts %>
-              <div class="text-center pt-2">
-                <%= link_to "View All Workouts", workouts_path, class: "text-indigo-600 hover:text-indigo-700 font-medium" %>
-              </div>
-            <% end %>
-          </div>
-        </section>
       <% end %>
+    </section>
 
-    </div>
+    <!-- Recent Workouts Section (if any exist) -->
+    <% if @workouts.any? %>
+      <section class="mt-12">
+        <div class="mb-6">
+          <h2 class="text-h2 text-[rgb(26,26,26)]">Recent Workouts</h2>
+        </div>
+
+        <!-- Workout cards -->
+        <div class="space-y-4">
+          <% @workouts.each do |workout| %>
+            <%= render 'workouts/card', workout: workout, show_delete: false %>
+          <% end %>
+
+          <!-- View All Workouts link -->
+          <% if @has_more_workouts %>
+            <div class="text-center pt-2">
+              <%= link_to "View All Workouts", workouts_path, class: "text-body text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)] font-medium" %>
+            </div>
+          <% end %>
+        </div>
+      </section>
+    <% end %>
   </div>
 </div>

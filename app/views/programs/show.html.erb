@@ -14,112 +14,131 @@
   <meta name="twitter:description" content="<%= @program.description.present? ? truncate(@program.description, length: 200) : 'View this exercise program on Fit or Forget' %>">
 <% end %>
 
-<div class="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
   <div class="max-w-4xl mx-auto">
-    <div class="bg-white rounded-lg shadow-md p-8">
-      <% if logged_in? %>
-        <div class="mb-6">
-          <%= link_to "← Back to Programs", programs_path, class: "text-indigo-600 hover:text-indigo-700 font-medium" %>
-        </div>
-      <% end %>
-
-      <h1 class="text-3xl font-extrabold text-gray-900 mb-6"><%= @program.title %></h1>
-
-      <% if @program.description.present? %>
-        <div class="prose prose-lg max-w-none mb-8">
-          <p class="text-gray-700 whitespace-pre-wrap"><%= @program.description %></p>
-        </div>
-      <% else %>
-        <p class="text-gray-400 italic mb-8">No description provided</p>
-      <% end %>
-
-      <!-- Start Workout Button -->
-      <% if @program.exercises.any? %>
-        <div class="mb-8">
-          <% if logged_in? %>
-            <%= link_to new_workout_path(program_id: @program.uuid), class: "inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors min-h-[44px] w-full sm:w-auto" do %>
-              <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              Start Workout
-            <% end %>
+    <!-- Program Info Card -->
+    <div class="bg-white rounded-sm shadow-sm p-6 mb-6">
+      <div class="flex items-start justify-between mb-6">
+        <div class="flex-grow">
+          <h1 class="text-lg font-bold text-[rgb(26,26,26)] leading-7"><%= @program.title %></h1>
+          <% if @program.description.present? %>
+            <p class="text-base text-gray-600 mt-2 whitespace-pre-wrap"><%= @program.description %></p>
           <% else %>
-            <div class="text-center p-6 bg-indigo-50 rounded-lg">
-              <p class="text-gray-700 mb-4">Sign in to start this workout and track your progress</p>
-              <%= link_to "Sign In", signin_path, class: "inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors min-h-[44px]" %>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
-
-      <!-- Task Group 4.2: Save to My Programs Button -->
-      <% if logged_in? && @program.user_id != current_user.id %>
-        <div class="mb-8">
-          <%= button_to duplicate_program_path(@program), method: :post, class: "inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-lg text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors min-h-[44px] w-full sm:w-auto" do %>
-            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
-            </svg>
-            Save to My Programs
-          <% end %>
-        </div>
-      <% end %>
-
-      <!-- Exercises Section -->
-      <div class="mt-8 pt-8 border-t border-gray-200">
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-2xl font-bold text-gray-900">Exercises</h2>
-          <% if @is_owner %>
-            <%= link_to new_program_exercise_path(@program), data: { turbo_frame: "exercise-form-frame" }, class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors min-h-[44px]" do %>
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-              </svg>
-              Add Exercise
-            <% end %>
+            <p class="text-base text-gray-400 italic mt-2">No description provided</p>
           <% end %>
         </div>
 
-        <!-- Exercise Form Frame -->
-        <%= turbo_frame_tag "exercise-form-frame" %>
+        <% if @is_owner %>
+          <div class="flex items-center gap-2 ml-4">
+            <%= render "shared/button",
+              type: :icon_only,
+              icon: "pencil",
+              url: edit_program_path(@program),
+              html_options: { "aria-label": "Edit program" } %>
 
-        <!-- Exercises List -->
-        <%= turbo_frame_tag "exercises-frame" do %>
-          <div id="exercises-list">
-            <% if @program.exercises.any? %>
-              <% @program.exercises.each do |exercise| %>
-                <%= render 'exercises/exercise', exercise: exercise %>
-              <% end %>
-            <% else %>
-              <div id="empty-exercises-state" class="text-center py-12 bg-gray-50 rounded-lg">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900">No exercises yet</h3>
-                <% if @is_owner %>
-                  <p class="mt-1 text-sm text-gray-500">Get started by adding your first exercise.</p>
-                <% end %>
-              </div>
+            <%= button_to program_path(@program),
+              method: :delete,
+              form: { data: { turbo_confirm: "Are you sure you want to delete '#{@program.title}'? This action cannot be undone." } },
+              class: "inline-flex items-center justify-center border border-transparent bg-transparent text-[rgb(26,26,26)] hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors p-2 min-h-[44px] min-w-[44px] rounded-sm",
+              "aria-label": "Delete program" do %>
+              <%= render "shared/icons/trash", class: "w-5 h-5" %>
             <% end %>
           </div>
         <% end %>
       </div>
 
-      <!-- Signup CTA for non-authenticated users -->
-      <% unless logged_in? %>
-        <div class="mt-8 pt-8 border-t border-gray-200 text-center">
-          <h3 class="text-xl font-semibold text-gray-900 mb-3">Create Your Own Programs</h3>
-          <p class="text-gray-600 mb-4">Sign up to build and share exercise programs with your clients.</p>
-          <%= link_to "Sign Up Free", signup_path, class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors min-h-[44px]" %>
-        </div>
+      <!-- Start Workout Button -->
+      <% if @program.exercises.any? %>
+        <% if logged_in? %>
+          <%= render "shared/button",
+            text: "Start Workout",
+            icon: "play",
+            icon_position: :left,
+            type: :primary,
+            size: :base,
+            url: new_workout_path(program_id: @program.uuid),
+            html_options: { class: "w-full" } %>
+        <% else %>
+          <div class="text-center p-6 bg-gray-50 rounded-sm">
+            <p class="text-gray-700 mb-4">Sign in to start this workout and track your progress</p>
+            <%= render "shared/button",
+              text: "Sign In",
+              icon: "arrow_right",
+              icon_position: :right,
+              type: :primary,
+              size: :base,
+              url: signin_path %>
+          </div>
+        <% end %>
       <% end %>
+    </div>
 
-      <!-- Owner controls -->
-      <% if @is_owner %>
-        <div class="flex space-x-4 pt-6 mt-8 border-t border-gray-200">
-          <%= link_to "Edit Program", edit_program_path(@program), class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors" %>
-          <%= button_to "Delete Program", program_path(@program), method: :delete, form: { data: { turbo_confirm: "Are you sure you want to delete '#{@program.title}'? This action cannot be undone." } }, class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors" %>
+    <!-- Save to My Programs Button for non-owners -->
+    <% if logged_in? && @program.user_id != current_user.id %>
+      <div class="mb-6">
+        <%= button_to duplicate_program_path(@program),
+          method: :post,
+          class: "inline-flex items-center justify-center w-full px-6 py-3 border border-transparent text-base font-medium rounded-sm text-white bg-[rgb(26,26,26)] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors min-h-[44px]" do %>
+          <%= render "shared/icons/save", class: "w-5 h-5 mr-2" %>
+          Save to My Programs
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Exercises Section -->
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-base font-semibold text-[rgb(26,26,26)] leading-6">Exercises</h2>
+        <% if @is_owner %>
+          <%= render "shared/button",
+            text: "Add",
+            icon: "plus",
+            icon_position: :left,
+            type: :secondary,
+            size: :small,
+            url: new_program_exercise_path(@program),
+            html_options: { data: { turbo_frame: "exercise-form-frame" } } %>
+        <% end %>
+      </div>
+
+      <!-- Exercise Form Frame -->
+      <%= turbo_frame_tag "exercise-form-frame" %>
+
+      <!-- Exercises List -->
+      <%= turbo_frame_tag "exercises-frame" do %>
+        <div id="exercises-list" class="space-y-3">
+          <% if @program.exercises.any? %>
+            <% @program.exercises.each do |exercise| %>
+              <%= render 'exercises/exercise', exercise: exercise %>
+            <% end %>
+          <% else %>
+            <div id="empty-exercises-state" class="text-center py-12 bg-white rounded-sm shadow-sm">
+              <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">No exercises yet</h3>
+              <% if @is_owner %>
+                <p class="mt-1 text-sm text-gray-500">Get started by adding your first exercise.</p>
+              <% end %>
+            </div>
+          <% end %>
         </div>
       <% end %>
     </div>
+
+    <!-- Signup CTA for non-authenticated users -->
+    <% unless logged_in? %>
+      <div class="bg-white rounded-sm shadow-sm p-6 text-center">
+        <h3 class="text-lg font-bold text-[rgb(26,26,26)] mb-3">Create Your Own Programs</h3>
+        <p class="text-gray-600 mb-4">Sign up to build and share exercise programs with your clients.</p>
+        <%= render "shared/button",
+          text: "Sign Up Free",
+          icon: "user_plus",
+          icon_position: :left,
+          type: :primary,
+          size: :base,
+          url: signup_path %>
+      </div>
+    <% end %>
   </div>
 </div>
