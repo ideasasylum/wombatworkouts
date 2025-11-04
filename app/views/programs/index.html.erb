@@ -40,7 +40,7 @@
       <!-- Program cards -->
       <div class="space-y-4">
         <% @programs.each do |program| %>
-          <%= render 'program_card', program: program, show_collapsible: false %>
+          <%= render 'program_card', program: program, show_collapsible: true %>
         <% end %>
       </div>
     <% end %>
