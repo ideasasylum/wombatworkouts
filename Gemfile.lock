@@ -87,6 +87,9 @@ GEM
     annotaterb (4.20.0)
       activerecord (>= 6.0.0)
       activesupport (>= 6.0.0)
+    appsignal (4.7.5)
+      logger
+      rack (>= 2.0.0)
     ast (2.4.3)
     base64 (0.3.0)
     bcrypt_pbkdf (1.1.1)
@@ -446,6 +449,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-session_store
   annotaterb
+  appsignal
   bootsnap
   brakeman
   bundler-audit
