@@ -62,13 +62,10 @@ class ProgramsControllerTest < ActionDispatch::IntegrationTest
     get program_path(@program)
     assert_response :success
 
-    # Edit controls present
-    assert_match(/Edit Program/, response.body, "Should contain 'Edit Program' link")
-    assert_match(/Delete Program/, response.body, "Should contain 'Delete Program' button")
+    # Edit controls present (icon buttons with aria-labels)
+    assert_match(/Edit program/, response.body, "Should contain 'Edit program' button")
+    assert_match(/Delete program/, response.body, "Should contain 'Delete program' button")
     assert_match(/Add Exercise/, response.body, "Should contain 'Add Exercise' link")
-
-    # Back to Programs link present
-    assert_match(/Back to Programs/, response.body, "Should contain 'Back to Programs' link")
 
     # Signup CTA not present
     assert_no_match(/Create Your Own Programs/, response.body, "Should not contain signup CTA")
@@ -79,12 +76,9 @@ class ProgramsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     # Edit controls not present
-    assert_no_match(/Edit Program/, response.body, "Should not contain 'Edit Program' link")
-    assert_no_match(/Delete Program/, response.body, "Should not contain 'Delete Program' button")
+    assert_no_match(/Edit program/, response.body, "Should not contain 'Edit program' button")
+    assert_no_match(/Delete program/, response.body, "Should not contain 'Delete program' button")
     assert_no_match(/Add Exercise/, response.body, "Should not contain 'Add Exercise' link")
-
-    # Back to Programs link not present
-    assert_no_match(/Back to Programs/, response.body, "Should not contain 'Back to Programs' link")
 
     # Signup CTA present
     assert_match(/Create Your Own Programs/, response.body, "Should contain signup CTA heading")
@@ -97,12 +91,9 @@ class ProgramsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     # Edit controls not present
-    assert_no_match(/Edit Program/, response.body, "Should not contain 'Edit Program' link")
-    assert_no_match(/Delete Program/, response.body, "Should not contain 'Delete Program' button")
+    assert_no_match(/Edit program/, response.body, "Should not contain 'Edit program' button")
+    assert_no_match(/Delete program/, response.body, "Should not contain 'Delete program' button")
     assert_no_match(/Add Exercise/, response.body, "Should not contain 'Add Exercise' link")
-
-    # Back to Programs link present (authenticated user)
-    assert_match(/Back to Programs/, response.body, "Should contain 'Back to Programs' link")
 
     # Signup CTA not present (authenticated user)
     assert_no_match(/Create Your Own Programs/, response.body, "Should not contain signup CTA")

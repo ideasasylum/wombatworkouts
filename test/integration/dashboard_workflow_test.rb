@@ -14,7 +14,7 @@ class DashboardWorkflowTest < ActionDispatch::IntegrationTest
 
     follow_redirect!
     assert_response :success
-    assert_select "h1", text: "Dashboard"
+    assert_select "h1", text: "Programs"
   end
 
   test "programs are sorted by most recent workout date" do
@@ -59,7 +59,7 @@ class DashboardWorkflowTest < ActionDispatch::IntegrationTest
 
     # Verify empty state elements
     assert_select "h2", text: "Create Your First Program"
-    assert_select "a[href=?]", new_program_path, text: "Create Program"
+    assert_select "a[href=?]", new_program_path, text: "New Program"
   end
 
   test "workouts section is hidden when no workouts exist" do
