@@ -3,11 +3,11 @@
 is_owner = logged_in? && current_user.id == exercise.program.user_id
 %>
 <%= turbo_frame_tag "exercise-#{exercise.id}" do %>
-  <div id="exercise-<%= exercise.id %>" class="bg-white border border-[rgb(204,204,204)] rounded-sm p-6" data-controller="drag" data-exercise-id="<%= exercise.id %>">
-    <div class="flex items-start gap-3">
-      <!-- Mobile reorder buttons (far left on mobile) -->
+  <div id="exercise-<%= exercise.id %>" class="bg-white border border-[rgb(204,204,204)] rounded-sm p-3 md:p-6" data-controller="drag" data-exercise-id="<%= exercise.id %>">
+    <div class="flex items-start gap-2">
+      <!-- Mobile reorder buttons (far left, pulled into margin) -->
       <% if is_owner %>
-        <div class="flex md:hidden flex-col gap-1 flex-shrink-0">
+        <div class="flex md:hidden flex-col gap-1 flex-shrink-0 -ml-1">
           <button type="button" data-action="click->drag#moveUp" class="p-1 text-[rgb(26,26,26)] hover:bg-gray-100 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-sm" aria-label="Move up">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
@@ -29,7 +29,16 @@ is_owner = logged_in? && current_user.id == exercise.program.user_id
       <% end %>
 
       <div class="flex-grow min-w-0">
-        <h3 class="text-base font-medium text-[rgb(26,26,26)] leading-6"><%= exercise.name %></h3>
+        <% if is_owner %>
+          <%= link_to edit_exercise_path(exercise),
+              data: { turbo_frame: "exercise-#{exercise.id}" },
+              class: "group" do %>
+            <h3 class="text-base font-medium text-[rgb(26,26,26)] leading-6 group-hover:text-gray-600 transition-colors"><%= exercise.name %></h3>
+          <% end %>
+        <% else %>
+          <h3 class="text-base font-medium text-[rgb(26,26,26)] leading-6"><%= exercise.name %></h3>
+        <% end %>
+
         <p class="text-sm text-gray-600 mt-1">
           <%= pluralize(exercise.repeat_count, 'rep') %>
         </p>
@@ -54,22 +63,9 @@ is_owner = logged_in? && current_user.id == exercise.program.user_id
         <% end %>
       </div>
 
-      <div class="flex items-start gap-1 flex-shrink-0">
-        <!-- Edit button -->
-        <% if is_owner %>
-          <%= render "shared/button",
-            type: :icon_only,
-            icon: "pencil",
-            url: edit_exercise_path(exercise),
-            html_options: {
-              "aria-label": "Edit exercise",
-              class: "p-1 md:p-2",
-              data: { turbo_frame: "exercise-#{exercise.id}" }
-            } %>
-        <% end %>
-
-        <!-- Delete button -->
-        <% if is_owner %>
+      <!-- Delete button only -->
+      <% if is_owner %>
+        <div class="flex items-start flex-shrink-0">
           <%= button_to exercise_path(exercise),
             method: :delete,
             form: { data: { turbo_confirm: "Are you sure you want to delete this exercise?" } },
@@ -77,8 +73,8 @@ is_owner = logged_in? && current_user.id == exercise.program.user_id
             "aria-label": "Delete exercise" do %>
             <%= render "shared/icons/trash", class: "w-5 h-5" %>
           <% end %>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
     </div>
   </div>
 <% end %>
