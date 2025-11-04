@@ -21,7 +21,7 @@
       <% end %>
 
       <!-- Current exercise card -->
-      <div class="bg-white border border-[rgb(204,204,204)] p-6 mb-6">
+      <div class="w-full bg-white border border-[rgb(204,204,204)] p-6 mb-6">
         <!-- Back to Summary button for completed workouts -->
         <% if @workout.complete? && params[:exercise_index].present? %>
           <div class="mb-6">

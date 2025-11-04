@@ -17,7 +17,7 @@
 <div class="min-h-screen py-6 md:py-12 px-4 sm:px-6 lg:px-8">
   <div class="max-w-7xl mx-auto">
     <!-- Program Info Card -->
-    <div class="bg-white border border-[rgb(204,204,204)] p-6 mb-6">
+    <div class="w-full bg-white border border-[rgb(204,204,204)] p-6 mb-6">
       <div class="flex items-start justify-between mb-6">
         <div class="flex-grow">
           <h1 class="text-lg font-bold text-[rgb(26,26,26)] leading-7"><%= @program.title %></h1>
@@ -128,7 +128,7 @@
 
     <!-- Signup CTA for non-authenticated users -->
     <% unless logged_in? %>
-      <div class="bg-white border border-[rgb(204,204,204)] p-6 text-center">
+      <div class="w-full bg-white border border-[rgb(204,204,204)] p-6 text-center">
         <h3 class="text-lg font-bold text-[rgb(26,26,26)] mb-3">Create Your Own Programs</h3>
         <p class="text-gray-600 mb-4">Sign up to build and share exercise programs with your clients.</p>
         <%= render "shared/button",
