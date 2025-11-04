@@ -17,11 +17,11 @@ class ProgramCreationTest < ApplicationSystemTestCase
 
     # Fill in program form with unique title
     program_title = "Test Program #{Time.current.to_i}"
-    fill_in "Title", with: program_title
+    fill_in "Name", with: program_title
     fill_in "Description", with: "Test description"
 
     # Submit the form using the button
-    click_button "Create Program"
+    click_button "Create"
 
     # Assert page contains program title (this waits for the page to load)
     assert_text program_title
@@ -50,11 +50,11 @@ class ProgramCreationTest < ApplicationSystemTestCase
 
     # Fill in program form with unique title
     program_title = "Test Program #{Time.current.to_i}"
-    fill_in "Title", with: program_title
+    fill_in "Name", with: program_title
     fill_in "Description", with: "Test description"
 
     # Submit the form using the button
-    click_button "Create Program"
+    click_button "Create"
 
     # Assert page contains program title (this waits for the page to load)
     assert_text program_title

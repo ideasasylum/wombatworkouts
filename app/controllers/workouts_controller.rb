@@ -65,7 +65,7 @@ class WorkoutsController < ApplicationController
 
     if @workout.mark_exercise_complete(exercise_id)
       if @workout.complete? && !was_complete_before
-        redirect_to workout_path(@workout), notice: "Workout complete! 🎉"
+        redirect_to workout_path(@workout), notice: "Workout Complete! 🎉"
       else
         redirect_to workout_path(@workout), notice: "Exercise marked complete"
       end
@@ -81,7 +81,7 @@ class WorkoutsController < ApplicationController
 
     if @workout.skip_exercise(exercise_id)
       if @workout.complete? && !was_complete_before
-        redirect_to workout_path(@workout), notice: "Workout complete! 🎉"
+        redirect_to workout_path(@workout), notice: "Workout Complete! 🎉"
       else
         redirect_to workout_path(@workout), notice: "Exercise skipped"
       end

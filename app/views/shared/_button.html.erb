@@ -17,6 +17,7 @@ type = local_assigns.fetch(:type, :primary)
 size = local_assigns.fetch(:size, :base)
 icon = local_assigns.fetch(:icon, nil)
 text = local_assigns.fetch(:text, nil)
+url = local_assigns.fetch(:url, nil)
 icon_position = local_assigns.fetch(:icon_position, :left)
 html_options = local_assigns.fetch(:html_options, {})
 full_width = local_assigns.fetch(:full_width, false)
@@ -96,5 +97,6 @@ end
   <% link_options[:method] = http_method if http_method.present? %>
   <%= link_to button_content.html_safe, url, link_options %>
 <% else %>
-  <%= content_tag(:button, button_content.html_safe, final_html_options.merge(type: 'button')) %>
+  <% button_options = { type: 'button' }.merge(final_html_options) %>
+  <%= content_tag(:button, button_content.html_safe, button_options) %>
 <% end %>

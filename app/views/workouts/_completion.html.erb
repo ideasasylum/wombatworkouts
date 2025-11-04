@@ -40,10 +40,12 @@
             <% if exercise['completed'] %>
               <div class="inline-flex items-center px-3 py-1 rounded-sm text-sm text-[rgb(26,26,26)]">
                 <%= render 'shared/icons/check', class: 'w-4 h-4 mr-1' %>
+                Completed
               </div>
             <% elsif exercise['skipped'] %>
               <div class="inline-flex items-center px-3 py-1 rounded-sm text-sm text-[rgb(107,114,128)]">
                 <%= render 'shared/icons/skip_forward', class: 'w-4 h-4 mr-1' %>
+                Skipped
               </div>
             <% end %>
           </div>
@@ -54,14 +56,18 @@
 
   <!-- Action buttons at bottom -->
   <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
-    <!-- Done - primary/solid black style -->
+    <!-- Browse Programs - primary/solid black style -->
     <%= link_to programs_path, class: "flex-1 inline-flex items-center justify-center border font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors rounded-sm px-6 py-3 text-base min-h-[44px] border-transparent text-white bg-[rgb(26,26,26)] hover:opacity-90 focus:ring-gray-900" do %>
+      Browse Programs
+    <% end %>
+    <!-- Done - secondary style -->
+    <%= link_to programs_path, class: "flex-1 inline-flex items-center justify-center border font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors rounded-sm px-6 py-3 text-base min-h-[44px] border-[rgb(204,204,204)] text-[rgb(26,26,26)] bg-white hover:bg-gray-50 focus:ring-gray-900" do %>
       Done
     <% end %>
   </div>
 </div>
 
-<% if flash[:notice] == "Workout complete! 🎉" %>
+<% if flash[:notice] == "Workout Complete! 🎉" %>
   <script type="module">
     import confetti from 'canvas-confetti';
 
