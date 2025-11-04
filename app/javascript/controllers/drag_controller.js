@@ -47,9 +47,12 @@ export default class extends Controller {
     const droppedOnElement = e.target.closest('[data-controller="drag"]')
 
     if (droppedOnElement && draggedId !== droppedOnElement.dataset.exerciseId) {
-      // Perform reorder via AJAX
-      const draggedElement = document.querySelector(`[data-exercise-id="${draggedId}"]`)
-      const newPosition = Array.from(droppedOnElement.parentNode.children).indexOf(droppedOnElement) + 1
+      // Perform reorder via AJAX - account for turbo-frame wrapper
+      const listContainer = droppedOnElement.closest('#exercises-list')
+      if (!listContainer) return false
+
+      const exercises = Array.from(listContainer.querySelectorAll('[data-controller="drag"]'))
+      const newPosition = exercises.indexOf(droppedOnElement) + 1
 
       this.moveExercise(draggedId, newPosition)
     }
@@ -72,14 +75,22 @@ export default class extends Controller {
   moveDown(e) {
     e.preventDefault()
     const currentPosition = this.getPosition()
-    const totalExercises = this.element.parentNode.children.length
+    // Get total count of exercises from the list container
+    const listContainer = this.element.closest('#exercises-list')
+    const totalExercises = listContainer ? listContainer.querySelectorAll('[data-controller="drag"]').length : 0
     if (currentPosition < totalExercises) {
       this.moveExercise(this.element.dataset.exerciseId, currentPosition + 1)
     }
   }
 
   getPosition() {
-    return Array.from(this.element.parentNode.children).indexOf(this.element) + 1
+    // Account for turbo-frame wrapper: go up to the list container
+    const listContainer = this.element.closest('#exercises-list')
+    if (!listContainer) return 1
+
+    // Find all exercise divs (skipping turbo-frame wrappers)
+    const exercises = Array.from(listContainer.querySelectorAll('[data-controller="drag"]'))
+    return exercises.indexOf(this.element) + 1
   }
 
   moveExercise(exerciseId, newPosition) {
