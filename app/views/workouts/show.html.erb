@@ -1,5 +1,5 @@
-<div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-4xl mx-auto">
+<div class="min-h-screen py-6 md:py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
     <% if @workout.complete? && params[:exercise_index].blank? %>
       <%= render 'completion' %>
     <% else %>
@@ -21,7 +21,7 @@
       <% end %>
 
       <!-- Current exercise card -->
-      <div class="bg-white rounded-sm shadow-sm p-6 mb-6">
+      <div class="bg-white border border-[rgb(204,204,204)] p-6 mb-6">
         <!-- Back to Summary button for completed workouts -->
         <% if @workout.complete? && params[:exercise_index].present? %>
           <div class="mb-6">
@@ -79,7 +79,7 @@
 
         <!-- Mobile floating action buttons (visible on mobile only) -->
         <div class="fixed bottom-0 left-0 right-0 md:hidden bg-white border-t border-[rgb(229,231,235)] shadow-lg p-4 z-50">
-          <div class="flex gap-3 max-w-4xl mx-auto">
+          <div class="flex gap-3 max-w-7xl mx-auto">
             <%= button_to skip_workout_path(@workout), method: :patch, params: { exercise_id: @current_exercise["id"] }, class: "flex-1 inline-flex items-center justify-center border font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors rounded-sm px-6 py-3 text-base min-h-[44px] border-[rgb(26,26,26)] border text-[rgb(26,26,26)] bg-white hover:bg-gray-50 focus:ring-gray-900" do %>
               <%= render 'shared/icons/skip_forward', class: 'w-5 h-5 mr-2' %>
               Skip
