@@ -8,7 +8,7 @@
 # No parameters needed - uses current_user from controller
 %>
 
-<nav class="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50" data-controller="mobile-menu">
+<nav class="bg-white shadow-sm border-b border-[rgb(204,204,204)] fixed top-0 left-0 right-0 z-50" data-controller="mobile-menu">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-16">
       <!-- Logo and Navigation Links (Desktop) -->
@@ -57,7 +57,7 @@
     <div class="fixed inset-y-0 right-0 max-w-xs w-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out" data-drawer-panel>
       <div class="flex flex-col h-full">
         <!-- Close button -->
-        <div class="flex items-center justify-between p-4 border-b border-gray-200">
+        <div class="flex items-center justify-between p-4 border-b border-[rgb(204,204,204)]">
           <span class="text-h2 text-[rgb(26,26,26)]">Menu</span>
           <button type="button"
                   class="inline-flex items-center justify-center p-2 rounded-sm text-[rgb(26,26,26)] hover:bg-gray-100 min-h-[44px] min-w-[44px]"
@@ -76,7 +76,7 @@
         </div>
 
         <!-- User info and logout -->
-        <div class="border-t border-gray-200 p-4 space-y-4">
+        <div class="border-t border-[rgb(204,204,204)] p-4 space-y-4">
           <div class="text-sm text-[rgb(107,114,128)]"><%= current_user.email %></div>
           <%= button_to "Log out",
             logout_path,

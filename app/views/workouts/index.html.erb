@@ -10,7 +10,7 @@
       <% if @workouts.any? %>
         <div class="space-y-4">
           <% @workouts.each do |workout| %>
-            <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div class="border border-[rgb(204,204,204)] rounded-lg p-6 hover:shadow-md transition-shadow">
               <h3 class="text-xl font-semibold text-gray-900 mb-2"><%= workout.program_title %></h3>
               
               <% stats = workout.completion_stats %>

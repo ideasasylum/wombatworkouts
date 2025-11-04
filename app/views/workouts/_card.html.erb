@@ -19,32 +19,31 @@ else
 end
 -%>
 
-<div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow bg-white">
-  <h3 class="text-xl font-semibold text-gray-900 mb-2"><%= workout.program_title %></h3>
-
-  <p class="text-gray-600 mb-3">
-    <%= stats[:completed_count] %> of <%= stats[:total_count] %> exercises complete
-  </p>
-
-  <div class="flex items-center justify-between mb-3">
-    <%= render 'shared/status_badge', status: status %>
+<div class="border border-[rgb(204,204,204)] p-6 bg-white">
+  <!-- Title and optional Delete button row -->
+  <div class="flex items-start justify-between mb-2">
+    <%= link_to workout_path(workout), class: "block group flex-1" do %>
+      <h3 class="text-xl font-semibold text-gray-900 group-hover:text-[rgb(107,114,128)] transition-colors"><%= workout.program_title %></h3>
+    <% end %>
 
     <% if show_delete %>
       <%= button_to 'Delete',
         workout_path(workout),
         method: :delete,
         form: { data: { turbo_confirm: "Are you sure?" } },
-        class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 transition-colors min-h-[44px]" %>
-    <% else %>
-      <%= render 'shared/button',
-        text: 'View',
-        url: workout_path(workout),
-        type: :primary,
-        size: :small %>
+        class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 transition-colors min-h-[44px] md:w-32 flex-shrink-0 ml-4" %>
     <% end %>
   </div>
 
+  <p class="text-gray-600 mb-3">
+    <%= stats[:completed_count] %> of <%= stats[:total_count] %> exercises complete
+  </p>
+
   <p class="text-sm text-gray-500">
-    Created <%= time_ago_in_words(workout.created_at) %> ago
+    <% if workout.complete? %>
+      Completed <%= time_ago_in_words(workout.created_at) %> ago
+    <% else %>
+      Created <%= time_ago_in_words(workout.created_at) %> ago
+    <% end %>
   </p>
 </div>
