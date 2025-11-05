@@ -1,42 +1,58 @@
 <%
-# Flash Messages Component - Minimalist Design
+# Flash Messages Component - Popover Style with Auto-Dismiss
 #
-# Displays flash notice and alert messages with minimal styling
-# - Minimal border, no background color
-# - Black text with appropriate icons
-# - Success: check icon, Error: alert icon
+# Displays flash notice and alert messages as popovers in top-right of content area
+# - Notice: Green/success styling with check icon
+# - Alert: Yellow/warning styling with alert icon
+# - Auto-dismiss after 3 seconds
+# - Manual close button
+# - Vertical stacking when multiple messages appear
 #
 # No parameters needed - reads from flash[:notice] and flash[:alert]
-
-logged_in_margin = logged_in? ? 'mt-16' : ''
 %>
 
 <% if flash[:notice] %>
-  <div class="<%= logged_in_margin %> mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4">
-    <div class="rounded-sm bg-white p-4 border border-[rgb(229,231,235)] shadow-sm">
-      <div class="flex items-center">
-        <div class="flex-shrink-0">
-          <%= render 'shared/icons/check', class: 'h-5 w-5 text-[rgb(26,26,26)]' %>
-        </div>
-        <div class="ml-3">
-          <p class="text-base font-normal text-[rgb(26,26,26)]"><%= flash[:notice] %></p>
-        </div>
+  <div
+    popover="manual"
+    data-controller="flash"
+    class="flash-popover flash-notice">
+    <div class="flex items-start gap-3">
+      <div class="flex-shrink-0 mt-0.5">
+        <%= render 'shared/icons/check', class: 'h-5 w-5 text-green-700' %>
       </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-green-800"><%= flash[:notice] %></p>
+      </div>
+      <button
+        type="button"
+        data-action="click->flash#close"
+        class="flex-shrink-0 rounded-sm p-1 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition-colors"
+        aria-label="Dismiss">
+        <%= render 'shared/icons/x', class: 'h-4 w-4 text-green-700' %>
+      </button>
     </div>
   </div>
 <% end %>
 
 <% if flash[:alert] %>
-  <div class="<%= logged_in_margin %> mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4">
-    <div class="rounded-sm bg-white p-4 border border-[rgb(229,231,235)] shadow-sm">
-      <div class="flex items-center">
-        <div class="flex-shrink-0">
-          <%= render 'shared/icons/alert', class: 'h-5 w-5 text-[rgb(26,26,26)]' %>
-        </div>
-        <div class="ml-3">
-          <p class="text-base font-normal text-[rgb(26,26,26)]"><%= flash[:alert] %></p>
-        </div>
+  <div
+    popover="manual"
+    data-controller="flash"
+    class="flash-popover flash-alert">
+    <div class="flex items-start gap-3">
+      <div class="flex-shrink-0 mt-0.5">
+        <%= render 'shared/icons/alert', class: 'h-5 w-5 text-yellow-700' %>
       </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-yellow-800"><%= flash[:alert] %></p>
+      </div>
+      <button
+        type="button"
+        data-action="click->flash#close"
+        class="flex-shrink-0 rounded-sm p-1 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-yellow-600 focus:ring-offset-2 transition-colors"
+        aria-label="Dismiss">
+        <%= render 'shared/icons/x', class: 'h-4 w-4 text-yellow-700' %>
+      </button>
     </div>
   </div>
 <% end %>
