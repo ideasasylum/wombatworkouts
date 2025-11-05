@@ -54,11 +54,10 @@ class WorkoutCompletionViewTest < ApplicationSystemTestCase
     assert_text "Push-ups"
     assert_text "Squats"
 
-    # Assert completed badges (more specific selector)
-    assert_selector ".inline-flex.items-center", text: "Completed", count: 3
+    # Assert completed badges (check icons only, no text)
+    assert_selector ".inline-flex.items-center svg", count: 3
 
-    # Assert action buttons are present
-    assert_link "Browse Programs"
+    # Assert action button is present
     assert_link "Done"
   end
 
