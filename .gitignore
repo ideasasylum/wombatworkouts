@@ -43,3 +43,4 @@
 /.pnp.loader.mjs
 /.yarn
 /test/.DS_Store
+.DS_Store
