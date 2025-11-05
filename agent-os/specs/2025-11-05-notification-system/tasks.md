@@ -58,18 +58,18 @@ This feature has three main components implemented in strategic order:
 #### Task Group 2: PWA Manifest and Service Worker Setup
 **Dependencies:** Task Group 1
 
-- [ ] 2.0 Complete PWA infrastructure setup
-  - [ ] 2.1 Write 2-8 focused tests for service worker registration
+- [x] 2.0 Complete PWA infrastructure setup
+  - [x] 2.1 Write 2-8 focused tests for service worker registration
     - Limit to 2-8 highly focused tests maximum
     - Test only critical setup (e.g., manifest loads, service worker registers successfully)
     - Skip exhaustive testing of offline caching and push event handling
-  - [ ] 2.2 Generate VAPID keys for Web Push API
+  - [x] 2.2 Generate VAPID keys for Web Push API
     - Install web-push gem: Add to Gemfile (`gem 'web-push', '~> 3.0'`)
     - Run `bundle install`
     - Generate keys: `WebPush.generate_key` in Rails console
     - Store in Rails credentials or environment variables (VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY)
     - Document key generation process in README or deployment notes
-  - [ ] 2.3 Create PWA manifest.json
+  - [x] 2.3 Create PWA manifest.json
     - File: `/public/manifest.json`
     - App name: "FitOrForget"
     - Short name: "FitOrForget"
@@ -77,31 +77,31 @@ This feature has three main components implemented in strategic order:
     - Display: "standalone"
     - Start URL: "/"
     - Icons: Reference brown wombat icon (192x192 and 512x512)
-  - [ ] 2.4 Create brown wombat icon assets
+  - [x] 2.4 Create brown wombat icon assets
     - Design brown wombat lifting weights icon
     - Generate sizes: 192x192px and 512x512px (minimum PWA requirements)
     - Also create favicon sizes: 16x16, 32x32, apple-touch-icon
     - Save to `/public/icon-192.png`, `/public/icon-512.png`, etc.
     - Replace or supplement existing `/public/icon.png`
-  - [ ] 2.5 Implement service worker with push notification handlers
+  - [x] 2.5 Implement service worker with push notification handlers
     - File: `/public/service-worker.js`
     - Add push event listener to receive and display notifications
     - Add notificationclick event listener to open specific program page
     - Implement basic offline cache for app shell (HTML, CSS, JS)
     - Add fallback offline page
     - Ensure proper MIME type (application/javascript)
-  - [ ] 2.6 Register service worker in application layout
+  - [x] 2.6 Register service worker in application layout
     - File: `/app/views/layouts/application.html.erb`
     - Uncomment or add manifest link tag
     - Add JavaScript to register service worker on page load
     - Handle registration errors gracefully
     - Check for service worker support before registering
-  - [ ] 2.7 Create offline fallback page
+  - [x] 2.7 Create offline fallback page
     - File: `/public/offline.html`
     - Simple, styled page with "You're offline" message
     - Match app branding and basic styles
     - Include link to return when online
-  - [ ] 2.8 Ensure PWA infrastructure tests pass
+  - [x] 2.8 Ensure PWA infrastructure tests pass
     - Run ONLY the 2-8 tests written in 2.1
     - Verify manifest loads correctly
     - Verify service worker registers
@@ -401,11 +401,11 @@ Recommended implementation sequence:
 - Manual testing required for PWA installation and push notifications
 
 ### Security Checklist
-- [ ] VAPID private key stored securely (credentials or env vars)
+- [x] VAPID private key stored securely (credentials or env vars)
 - [ ] Push subscription endpoints validated (HTTPS only)
 - [ ] User authorization on all reminder and subscription endpoints
 - [ ] CSRF protection enabled
-- [ ] Service worker served with correct MIME type
+- [x] Service worker served with correct MIME type
 
 ### Browser Compatibility Notes
 - Service workers require HTTPS (except localhost)
@@ -414,13 +414,13 @@ Recommended implementation sequence:
 - Graceful degradation for unsupported browsers
 
 ### Deployment Checklist
-- [ ] Generate VAPID keys in production
-- [ ] Store keys in Rails credentials or environment variables
+- [x] Generate VAPID keys in production
+- [x] Store keys in Rails credentials or environment variables
 - [ ] Configure Solid Queue recurring task for ReminderCheckJob
-- [ ] Ensure service worker accessible at `/service-worker.js`
-- [ ] Create and deploy wombat icon assets (192x192, 512x512)
+- [x] Ensure service worker accessible at `/service-worker.js`
+- [x] Create and deploy wombat icon assets (192x192, 512x512)
 - [ ] Test HTTPS requirement in production environment
-- [ ] Verify manifest.json loads correctly
+- [x] Verify manifest.json loads correctly
 - [ ] Test PWA installation on production URL
 
 ---

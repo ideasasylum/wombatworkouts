@@ -31,6 +31,9 @@ gem "redcarpet"
 # Database-backed session store for indefinite sessions
 gem "activerecord-session_store"
 
+# Web Push notifications with VAPID
+gem "web-push", "~> 3.0"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[windows jruby]
 
@@ -68,6 +71,9 @@ group :development, :test do
 
   # Annotate models with schema information
   gem "annotaterb"
+
+  # Load environment variables from .env file in development/test
+  gem "dotenv-rails"
 end
 
 group :development do
