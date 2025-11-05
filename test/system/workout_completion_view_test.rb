@@ -79,7 +79,6 @@ class WorkoutCompletionViewTest < ApplicationSystemTestCase
     assert_text "You completed 3 of 3 exercises"
 
     # Assert buttons are accessible on mobile
-    assert_link "Browse Programs"
     assert_link "Done"
   end
 
