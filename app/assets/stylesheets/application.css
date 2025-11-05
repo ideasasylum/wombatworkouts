@@ -95,20 +95,19 @@
 @media (max-width: 640px) {
   .flash-popover,
   [popover].flash-popover {
-    top: 0.5rem !important;
+    top: 5rem !important;
     right: 0.5rem !important;
     left: auto !important;
     min-width: 280px;
     max-width: calc(100vw - 1rem);
-    inset: unset !important;
   }
 
   .flash-popover:nth-of-type(2) {
-    top: 5.5rem !important;
+    top: 10rem !important;
   }
 
   .flash-popover:nth-of-type(3) {
-    top: 10.5rem !important;
+    top: 15rem !important;
   }
 }
 
