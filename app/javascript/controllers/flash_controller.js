@@ -11,6 +11,11 @@ export default class extends Controller {
     // Show the popover immediately
     this.element.showPopover()
 
+    // Force positioning to top-right (override popover API defaults)
+    this.element.style.position = 'fixed'
+    this.element.style.inset = 'unset'
+    this.element.style.margin = '0'
+
     // Add entrance animation class
     this.element.classList.add("flash-enter")
 
