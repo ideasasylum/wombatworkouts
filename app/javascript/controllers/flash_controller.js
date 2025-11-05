@@ -13,8 +13,13 @@ export default class extends Controller {
 
     // Force positioning to top-right (override popover API defaults)
     this.element.style.position = 'fixed'
-    this.element.style.inset = 'unset'
     this.element.style.margin = '0'
+
+    // Only set inset: unset on desktop (mobile CSS handles it differently)
+    const isMobile = window.innerWidth <= 640
+    if (!isMobile) {
+      this.element.style.inset = 'unset'
+    }
 
     // Add entrance animation class
     this.element.classList.add("flash-enter")
