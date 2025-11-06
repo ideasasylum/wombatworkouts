@@ -1,4 +1,7 @@
 class SessionsController < ApplicationController
+  # Prevent caching of authentication pages and responses
+  before_action :set_no_cache_headers
+
   # Signup (Registration) Actions
   def new_signup
     # Render the signup form
@@ -69,6 +72,23 @@ class SessionsController < ApplicationController
   def destroy
     reset_session
     redirect_to root_path, notice: "You have been logged out"
+  end
+
+  # Session health check endpoint for PWA
+  def health_check
+    respond_to do |format|
+      format.json do
+        if logged_in?
+          render json: {
+            authenticated: true,
+            user_id: current_user.id,
+            email: current_user.email
+          }
+        else
+          render json: { authenticated: false }, status: :unauthorized
+        end
+      end
+    end
   end
 
   # Verification Actions (called by Stimulus controller via form submission)
@@ -148,6 +168,12 @@ class SessionsController < ApplicationController
   end
 
   private
+
+  def set_no_cache_headers
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+  end
 
   def generate_registration_challenge(email)
     # Generate a temporary webauthn_id for the challenge

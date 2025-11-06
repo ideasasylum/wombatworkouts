@@ -4,8 +4,8 @@
     <title><%= content_for(:title) || "Wombat Workouts" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="FitOrForget">
-    <meta name="apple-mobile-web-app-title" content="FitOrForget">
+    <meta name="application-name" content="Wombat Workouts">
+    <meta name="apple-mobile-web-app-title" content="Wombat Workouts">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#8b7355">
     <%= csrf_meta_tags %>
@@ -57,7 +57,10 @@
     </script>
   </head>
 
-  <body style="background-color: rgb(237, 242, 247);">
+  <body style="background-color: rgb(237, 242, 247);"
+        data-controller="<%= logged_in? ? 'session-health' : '' %>"
+        data-session-health-is-authenticated-value="<%= logged_in? %>"
+        data-session-health-user-data-value="<%= logged_in? ? { userId: current_user.id, email: current_user.email }.to_json : '{}' %>">
     <%= render 'shared/navbar' if logged_in? %>
 
     <%= render 'shared/flash_messages' %>
