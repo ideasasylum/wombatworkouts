@@ -14,6 +14,11 @@ class RemindersController < ApplicationController
       return
     end
 
+    # Update user timezone if not set
+    if reminder_params[:timezone].present? && current_user.timezone.blank?
+      current_user.update(timezone: reminder_params[:timezone])
+    end
+
     @reminder = current_user.reminders.build(reminder_params)
     @reminder.program = @program
 
@@ -28,9 +33,15 @@ class RemindersController < ApplicationController
     return unless @reminder
 
     if @reminder.update(reminder_params)
-      redirect_to reminders_path, notice: "Reminder updated successfully"
+      respond_to do |format|
+        format.html { redirect_to reminders_path, notice: "Reminder updated successfully" }
+        format.json { head :ok }
+      end
     else
-      render :index, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { render :index, status: :unprocessable_entity }
+        format.json { render json: {errors: @reminder.errors.full_messages}, status: :unprocessable_entity }
+      end
     end
   end
 

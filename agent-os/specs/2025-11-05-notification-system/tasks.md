@@ -252,18 +252,18 @@ This feature has three main components implemented in strategic order:
 #### Task Group 5: Reminders UI and Client-Side Integration
 **Dependencies:** Task Group 4
 
-- [ ] 5.0 Complete reminders UI and client-side push subscription
-  - [ ] 5.1 Write 2-8 focused tests for reminders UI
+- [x] 5.0 Complete reminders UI and client-side push subscription
+  - [x] 5.1 Write 2-8 focused tests for reminders UI
     - Limit to 2-8 highly focused tests maximum
     - Test only critical UI behaviors (e.g., reminder list renders, toggle works, form submission)
     - Skip exhaustive testing of all form states and interactions
-  - [ ] 5.2 Add bell icon to navbar
+  - [x] 5.2 Add bell icon to navbar
     - File: `/app/views/shared/_navbar.html.erb`
     - Add bell icon linking to /reminders
     - Position next to Dashboard/Programs links in desktop nav
     - Match existing icon style and spacing
     - Add appropriate aria-label for accessibility
-  - [ ] 5.3 Create reminders index page
+  - [x] 5.3 Create reminders index page
     - File: `/app/views/reminders/index.html.erb`
     - Page title: "Reminders" or "Workout Reminders"
     - List all reminders with program names
@@ -273,13 +273,13 @@ This feature has three main components implemented in strategic order:
     - Show "Create Reminder" button/link
     - If no push notification permission: Show explanation and permission request button
     - Match existing minimalist aesthetic
-  - [ ] 5.4 Create reminder form (create/edit)
+  - [x] 5.4 Create reminder form (create/edit)
     - Can be inline on index page or separate partial
     - Fields: Program selector (dropdown), Days of week (multi-select checkboxes), Time picker, Timezone (auto-detected and hidden)
     - Validation: Required fields, at least one day selected
     - Submit creates or updates reminder via Turbo
     - Follow existing form patterns and Tailwind styling
-  - [ ] 5.5 Implement client-side push subscription JavaScript
+  - [x] 5.5 Implement client-side push subscription JavaScript
     - File: `/app/javascript/controllers/push_subscription_controller.js` or inline script
     - Detect user timezone using JavaScript: `Intl.DateTimeFormat().resolvedOptions().timeZone`
     - Request notification permission when user clicks "Enable Notifications" button
@@ -288,17 +288,17 @@ This feature has three main components implemented in strategic order:
     - Send subscription details to PushSubscriptionsController (endpoint, p256dh_key, auth_key)
     - On permission denied: Show appropriate message
     - Check permission status on page load and adjust UI accordingly
-  - [ ] 5.6 Implement reminder toggle functionality
+  - [x] 5.6 Implement reminder toggle functionality
     - Use Turbo Frames or Stimulus to toggle enabled status without full page reload
     - Send PATCH request to RemindersController update action
     - Update UI to reflect new state (visual feedback)
     - Handle errors gracefully
-  - [ ] 5.7 Add timezone detection and storage
+  - [x] 5.7 Add timezone detection and storage
     - Detect timezone on first reminder creation using JavaScript
     - Save to user record if not already set
     - Display current timezone to user for confirmation
     - Allow manual timezone override if needed (future enhancement - keep simple for now)
-  - [ ] 5.8 Ensure reminders UI tests pass
+  - [x] 5.8 Ensure reminders UI tests pass
     - Run ONLY the 2-8 tests written in 5.1
     - Verify reminder list renders correctly
     - Verify toggle and delete functions work
