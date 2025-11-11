@@ -44,6 +44,12 @@ Rails.application.routes.draw do
     end
   end
 
+  # Push subscriptions routes
+  resources :push_subscriptions, only: [:create, :destroy]
+
+  # Reminders routes
+  resources :reminders, only: [:index, :create, :update, :destroy]
+
   # Defines the root path route ("/")
   root "home#index"
 end

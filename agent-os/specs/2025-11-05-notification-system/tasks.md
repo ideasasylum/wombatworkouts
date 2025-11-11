@@ -178,19 +178,19 @@ This feature has three main components implemented in strategic order:
 #### Task Group 4: Controllers, Routes, and Background Jobs
 **Dependencies:** Task Group 3
 
-- [ ] 4.0 Complete API layer and background job implementation
-  - [ ] 4.1 Write 2-8 focused tests for controllers and jobs
+- [x] 4.0 Complete API layer and background job implementation
+  - [x] 4.1 Write 2-8 focused tests for controllers and jobs
     - Limit to 2-8 highly focused tests maximum
     - Test only critical actions (e.g., create reminder, destroy subscription, job enqueues notifications)
     - Skip exhaustive testing of all CRUD operations and error scenarios
-  - [ ] 4.2 Create PushSubscriptionsController
+  - [x] 4.2 Create PushSubscriptionsController
     - File: `/app/controllers/push_subscriptions_controller.rb`
     - Actions: create, destroy (POST and DELETE only)
     - Create: Accept endpoint, p256dh_key, auth_key from client, associate with current_user
     - Destroy: Remove subscription by ID (ensure user owns subscription)
     - Authorization: User can only manage their own subscriptions
     - Follow RESTful conventions and existing controller patterns
-  - [ ] 4.3 Create RemindersController
+  - [x] 4.3 Create RemindersController
     - File: `/app/controllers/reminders_controller.rb`
     - Actions: index, create, update, destroy
     - Index: List all reminders for current_user with program names
@@ -198,7 +198,7 @@ This feature has three main components implemented in strategic order:
     - Update: Toggle enabled status, update days/time
     - Destroy: Remove reminder (ensure user owns reminder)
     - Authorization: User can only manage reminders for their own programs
-  - [ ] 4.4 Add routes for subscriptions and reminders
+  - [x] 4.4 Add routes for subscriptions and reminders
     - File: `/config/routes.rb`
     - POST /push_subscriptions - create subscription
     - DELETE /push_subscriptions/:id - destroy subscription
@@ -207,14 +207,15 @@ This feature has three main components implemented in strategic order:
     - PATCH /reminders/:id - update reminder
     - DELETE /reminders/:id - destroy reminder
     - Follow RESTful conventions
-  - [ ] 4.5 Create ReminderCheckJob (daily scheduled job)
+  - [x] 4.5 Create ReminderCheckJob (daily scheduled job)
     - File: `/app/jobs/reminder_check_job.rb`
     - Query reminders where enabled=true and current day in days_of_week array
     - For each reminder, calculate if notification time has arrived in user's timezone
+    - Use last_sent_at to prevent sending duplicate notifications on same day
     - Enqueue SendPushNotificationJob for each due reminder
     - Handle timezone conversion using ActiveSupport::TimeZone
     - Follow existing job patterns in codebase
-  - [ ] 4.6 Create SendPushNotificationJob (individual notification delivery)
+  - [x] 4.6 Create SendPushNotificationJob (individual notification delivery)
     - File: `/app/jobs/send_push_notification_job.rb`
     - Accept reminder_id as parameter
     - Look up reminder and associated program
@@ -222,13 +223,14 @@ This feature has three main components implemented in strategic order:
     - Use web-push gem to send notification to each subscription
     - Notification payload: title, body ("Time to work out! [Program Name]"), program URL
     - Handle subscription errors gracefully (remove invalid subscriptions)
+    - Update reminder.last_sent_at after successful send
     - Follow existing job patterns in codebase
-  - [ ] 4.7 Configure Solid Queue for daily ReminderCheckJob
+  - [x] 4.7 Configure Solid Queue for daily ReminderCheckJob
     - File: `/config/recurring.yml` or Solid Queue configuration
     - Schedule ReminderCheckJob to run daily (e.g., every hour or once at midnight UTC)
     - Ensure Solid Queue is properly configured in production
     - Test job scheduling in development environment
-  - [ ] 4.8 Ensure API and job tests pass
+  - [x] 4.8 Ensure API and job tests pass
     - Run ONLY the 2-8 tests written in 4.1
     - Verify reminder CRUD operations work
     - Verify job enqueues notifications correctly
@@ -238,8 +240,8 @@ This feature has three main components implemented in strategic order:
 - The 2-8 tests written in 4.1 pass
 - PushSubscriptionsController creates and destroys subscriptions
 - RemindersController handles CRUD operations with proper authorization
-- ReminderCheckJob identifies due reminders correctly
-- SendPushNotificationJob sends notifications via Web Push API
+- ReminderCheckJob identifies due reminders correctly using last_sent_at
+- SendPushNotificationJob sends notifications via Web Push API and updates last_sent_at
 - Solid Queue scheduled to run ReminderCheckJob daily
 - Invalid subscriptions removed gracefully
 
@@ -417,7 +419,7 @@ Recommended implementation sequence:
 ### Deployment Checklist
 - [x] Generate VAPID keys in production
 - [x] Store keys in Rails credentials or environment variables
-- [ ] Configure Solid Queue recurring task for ReminderCheckJob
+- [x] Configure Solid Queue recurring task for ReminderCheckJob
 - [x] Ensure service worker accessible at `/service-worker.js`
 - [x] Create and deploy wombat icon assets (192x192, 512x512)
 - [ ] Test HTTPS requirement in production environment
