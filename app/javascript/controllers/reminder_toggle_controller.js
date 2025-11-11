@@ -14,7 +14,8 @@ export default class extends Controller {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-Token': this.getCsrfToken()
+          'X-CSRF-Token': this.getCsrfToken(),
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
           reminder: {
@@ -24,6 +25,8 @@ export default class extends Controller {
       })
 
       if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('Server error:', response.status, errorData)
         // Revert checkbox state on error
         checkbox.checked = !enabled
         throw new Error('Failed to update reminder')
@@ -37,11 +40,14 @@ export default class extends Controller {
       console.log('Reminder updated successfully')
     } catch (error) {
       console.error('Error toggling reminder:', error)
-      alert('Failed to update reminder. Please try again.')
-      // Revert checkbox state and text
-      checkbox.checked = !enabled
-      if (this.hasStatusTextTarget) {
-        this.statusTextTarget.textContent = !enabled ? 'On' : 'Off'
+      // Only show alert if not already reverted
+      if (checkbox.checked === enabled) {
+        alert(`Failed to update reminder. Please try again. Error: ${error.message}`)
+        // Revert checkbox state and text
+        checkbox.checked = !enabled
+        if (this.hasStatusTextTarget) {
+          this.statusTextTarget.textContent = !enabled ? 'On' : 'Off'
+        }
       }
     }
   }

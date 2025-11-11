@@ -35,7 +35,7 @@ class RemindersController < ApplicationController
     if @reminder.update(reminder_params)
       respond_to do |format|
         format.html { redirect_to reminders_path, notice: "Reminder updated successfully" }
-        format.json { head :ok }
+        format.json { render json: {success: true}, status: :ok }
       end
     else
       respond_to do |format|
