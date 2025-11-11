@@ -8,8 +8,8 @@ class PwaInfrastructureTest < ActionDispatch::IntegrationTest
     assert_equal "application/json", response.media_type
 
     manifest = JSON.parse(response.body)
-    assert_equal "FitOrForget", manifest["name"]
-    assert_equal "FitOrForget", manifest["short_name"]
+    assert_equal "Wombat Workouts", manifest["name"]
+    assert_equal "Wombat Workouts", manifest["short_name"]
     assert_equal "standalone", manifest["display"]
     assert_equal "/", manifest["start_url"]
   end
@@ -59,7 +59,7 @@ class PwaInfrastructureTest < ActionDispatch::IntegrationTest
 
     # Verify offline page contains expected content
     assert_includes response.body, "You're Offline"
-    assert_includes response.body, "FitOrForget"
+    assert_includes response.body, "Wombat Workouts"
   end
 
   # Test 5: Application layout includes manifest link
