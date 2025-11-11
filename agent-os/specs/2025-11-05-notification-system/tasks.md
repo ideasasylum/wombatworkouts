@@ -123,40 +123,41 @@ This feature has three main components implemented in strategic order:
 #### Task Group 3: Database Models and Migrations
 **Dependencies:** Task Group 2
 
-- [ ] 3.0 Complete database layer for push subscriptions and reminders
-  - [ ] 3.1 Write 2-8 focused tests for model validations and associations
+- [x] 3.0 Complete database layer for push subscriptions and reminders
+  - [x] 3.1 Write 2-8 focused tests for model validations and associations
     - Limit to 2-8 highly focused tests maximum
     - Test only critical model behaviors (e.g., required fields, associations, timezone handling)
     - Skip exhaustive validation and edge case testing
-  - [ ] 3.2 Create PushSubscription model and migration
+  - [x] 3.2 Create PushSubscription model and migration
     - Model: `/app/models/push_subscription.rb`
     - Migration: Create push_subscriptions table
     - Fields: user_id (foreign key, indexed, not null), endpoint (text, not null), p256dh_key (text, not null), auth_key (text, not null), timestamps
     - Validations: Presence of all required fields, endpoint must be HTTPS URL
     - Association: belongs_to :user
-  - [ ] 3.3 Create Reminder model and migration
+  - [x] 3.3 Create Reminder model and migration
     - Model: `/app/models/reminder.rb`
     - Migration: Create reminders table
-    - Fields: user_id (foreign key, indexed, not null), program_id (foreign key, indexed, not null), days_of_week (jsonb or text array), time (time), timezone (string), enabled (boolean, default: true, indexed), timestamps
+    - Fields: user_id (foreign key, indexed, not null), program_id (foreign key, indexed, not null), days_of_week (JSON text - NOT jsonb, this is SQLite), time (time), timezone (string), enabled (boolean, default: true, indexed), last_sent_at (datetime, nullable), timestamps
     - Validations: Presence of required fields, time format, days_of_week array contains valid day names
     - Associations: belongs_to :user, belongs_to :program
     - Add index on (enabled, days_of_week) for query performance
-  - [ ] 3.4 Add timezone to users table (if not present)
+    - Scope: .enabled for enabled reminders
+  - [x] 3.4 Add timezone to users table (if not present)
     - Migration: Add timezone column to users table (string, nullable)
     - Default: nil (will be set on first reminder creation)
     - Update User model to validate timezone format if present
-  - [ ] 3.5 Update User model associations
+  - [x] 3.5 Update User model associations
     - File: `/app/models/user.rb`
     - Add: has_many :push_subscriptions, dependent: :destroy
     - Add: has_many :reminders, dependent: :destroy
-  - [ ] 3.6 Update Program model associations
+  - [x] 3.6 Update Program model associations
     - File: `/app/models/program.rb`
-    - Add: has_one :reminder, dependent: :destroy
-  - [ ] 3.7 Run migrations and verify schema
+    - Add: has_many :reminders, dependent: :destroy (NOTE: has_many not has_one, user wants multiple reminders per program)
+  - [x] 3.7 Run migrations and verify schema
     - Run: `rails db:migrate`
     - Verify tables created with correct columns and indexes
     - Check foreign key constraints are in place
-  - [ ] 3.8 Ensure database layer tests pass
+  - [x] 3.8 Ensure database layer tests pass
     - Run ONLY the 2-8 tests written in 3.1
     - Verify validations work correctly
     - Verify associations work correctly
@@ -443,5 +444,5 @@ Recommended implementation sequence:
 - Use **Turbo** for dynamic updates
 - Follow **minitest** for testing
 - Use **ActiveRecord** for database queries
-- Use **Postgres** data types (jsonb for arrays)
+- Use **SQLite** database (TEXT column with JSON serialization, NOT jsonb)
 - Follow **RESTful** conventions for routes and controllers

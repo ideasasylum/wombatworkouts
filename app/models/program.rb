@@ -15,6 +15,7 @@ class Program < ApplicationRecord
   belongs_to :user
   has_many :exercises, -> { order(position: :asc) }, dependent: :destroy
   has_many :workouts, dependent: :nullify  # Workouts persist as snapshots even if program is deleted
+  has_many :reminders, dependent: :destroy
 
   # Validations
   validates :title, presence: true

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_10_27_142303) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_09_210004) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -85,6 +85,31 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_142303) do
     t.index ["uuid"], name: "index_programs_on_uuid", unique: true
   end
 
+  create_table "push_subscriptions", force: :cascade do |t|
+    t.text "auth_key", null: false
+    t.datetime "created_at", null: false
+    t.text "endpoint", null: false
+    t.text "p256dh_key", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_push_subscriptions_on_user_id"
+  end
+
+  create_table "reminders", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "days_of_week", null: false
+    t.boolean "enabled", default: true, null: false
+    t.datetime "last_sent_at"
+    t.integer "program_id", null: false
+    t.time "time", null: false
+    t.string "timezone", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["enabled"], name: "index_reminders_on_enabled"
+    t.index ["program_id"], name: "index_reminders_on_program_id"
+    t.index ["user_id"], name: "index_reminders_on_user_id"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "data"
@@ -97,6 +122,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_142303) do
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
+    t.string "timezone"
     t.datetime "updated_at", null: false
     t.string "webauthn_id", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -121,6 +147,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_142303) do
   add_foreign_key "credentials", "users", on_delete: :cascade
   add_foreign_key "exercises", "programs", on_delete: :cascade
   add_foreign_key "programs", "users", on_delete: :cascade
+  add_foreign_key "push_subscriptions", "users", on_delete: :cascade
+  add_foreign_key "reminders", "programs", on_delete: :cascade
+  add_foreign_key "reminders", "users", on_delete: :cascade
   add_foreign_key "workouts", "programs", on_delete: :nullify
   add_foreign_key "workouts", "users", on_delete: :cascade
 end
