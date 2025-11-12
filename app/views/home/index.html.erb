@@ -1,27 +1,131 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full space-y-8 text-center">
-    <h1 class="text-4xl font-bold text-gray-900">Wombat Workouts</h1>
-    <p class="text-lg text-gray-600">Welcome to Wombat Workouts</p>
+<% if logged_in? %>
+  <%# Redirect logged-in users to dashboard %>
+  <% redirect_to dashboard_path %>
+<% else %>
+  <%# Marketing page for logged-out users %>
+  <div class="bg-[rgb(237,242,247)]">
+    <!-- Hero Section -->
+    <div class="relative isolate overflow-hidden">
+      <!-- Header -->
+      <header class="absolute inset-x-0 top-0 z-50">
+        <nav class="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
+          <div class="flex lg:flex-1">
+            <span class="text-2xl font-bold text-[rgb(26,26,26)]">Wombat Workouts</span>
+          </div>
+          <div class="flex gap-x-6">
+            <%= link_to "Sign In", signin_path, class: "text-sm font-semibold text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)]" %>
+            <%= link_to "Sign Up", signup_path, class: "rounded-sm bg-[rgb(139,115,85)] px-4 py-2 text-sm font-semibold text-white hover:bg-[rgb(115,95,70)] transition-colors" %>
+          </div>
+        </nav>
+      </header>
 
-    <% if logged_in? %>
-      <div class="space-y-4">
-        <p class="text-base text-gray-700">
-          You are logged in as <strong><%= current_user.email %></strong>
+      <!-- Hero Content -->
+      <div class="mx-auto max-w-7xl px-6 pt-32 pb-24 sm:pt-40 sm:pb-32 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center">
+          <h1 class="text-5xl font-bold tracking-tight text-[rgb(26,26,26)] sm:text-6xl">
+            Never forget your rehab workouts again
+          </h1>
+          <p class="mt-6 text-lg leading-8 text-[rgb(107,114,128)]">
+            Build custom workout programs, track your progress, and get timely reminders—all without the gym membership. Perfect for physical therapy, injury recovery, and staying consistent with your exercises.
+          </p>
+          <div class="mt-10 flex items-center justify-center gap-x-6">
+            <%= link_to "Get Started", signup_path, class: "rounded-sm bg-[rgb(139,115,85)] px-6 py-3 text-base font-semibold text-white hover:bg-[rgb(115,95,70)] transition-colors shadow-sm" %>
+            <%= link_to "Learn More", "#features", class: "text-base font-semibold text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)]" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div id="features" class="bg-white py-24 sm:py-32">
+      <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl lg:mx-0">
+          <h2 class="text-4xl font-bold tracking-tight text-[rgb(26,26,26)] sm:text-5xl">
+            Everything you need to stay on track
+          </h2>
+          <p class="mt-6 text-lg leading-8 text-[rgb(107,114,128)]">
+            Built for people who need to remember their workouts, not for bodybuilders with spreadsheets.
+          </p>
+        </div>
+        <dl class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+          <div class="flex flex-col gap-y-4 border-l-2 border-[rgb(139,115,85)] pl-6">
+            <dt class="text-lg font-semibold text-[rgb(26,26,26)]">
+              Custom Programs
+            </dt>
+            <dd class="text-base leading-7 text-[rgb(107,114,128)]">
+              Create workout programs tailored to your needs. Whether it's ankle rehab, shoulder strength, or daily stretches—organize everything in one place with exercises that actually work for you.
+            </dd>
+          </div>
+          <div class="flex flex-col gap-y-4 border-l-2 border-[rgb(139,115,85)] pl-6">
+            <dt class="text-lg font-semibold text-[rgb(26,26,26)]">
+              Progress Tracking
+            </dt>
+            <dd class="text-base leading-7 text-[rgb(107,114,128)]">
+              See your workout history at a glance. Track completed exercises, mark sets as done or skipped, and watch your consistency build over time. No complicated metrics—just simple progress you can actually see.
+            </dd>
+          </div>
+          <div class="flex flex-col gap-y-4 border-l-2 border-[rgb(139,115,85)] pl-6">
+            <dt class="text-lg font-semibold text-[rgb(26,26,26)]">
+              Smart Reminders
+            </dt>
+            <dd class="text-base leading-7 text-[rgb(107,114,128)]">
+              Get push notifications when it's time to work out. Set reminders for specific days and times, respecting your timezone. Because the hardest part of rehab is remembering to do it.
+            </dd>
+          </div>
+          <div class="flex flex-col gap-y-4 border-l-2 border-[rgb(139,115,85)] pl-6">
+            <dt class="text-lg font-semibold text-[rgb(26,26,26)]">
+              Works Everywhere
+            </dt>
+            <dd class="text-base leading-7 text-[rgb(107,114,128)]">
+              Install as a Progressive Web App on your phone, tablet, or desktop. Works offline so you can access your workouts anywhere—even in the gym with spotty WiFi.
+            </dd>
+          </div>
+          <div class="flex flex-col gap-y-4 border-l-2 border-[rgb(139,115,85)] pl-6">
+            <dt class="text-lg font-semibold text-[rgb(26,26,26)]">
+              Secure & Private
+            </dt>
+            <dd class="text-base leading-7 text-[rgb(107,114,128)]">
+              Sign in with passkeys—no passwords to remember or lose. Your workout data stays private and secure with modern WebAuthn authentication and end-to-end encryption.
+            </dd>
+          </div>
+          <div class="flex flex-col gap-y-4 border-l-2 border-[rgb(139,115,85)] pl-6">
+            <dt class="text-lg font-semibold text-[rgb(26,26,26)]">
+              Built by a Wombat Fan
+            </dt>
+            <dd class="text-base leading-7 text-[rgb(107,114,128)]">
+              Made with care by someone who actually needs this. No VC money, no aggressive growth targets, no annoying upsells—just a simple tool that does what it says.
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="bg-[rgb(139,115,85)]">
+      <div class="px-6 py-24 sm:px-6 sm:py-32 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center">
+          <h2 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+            Ready to stay consistent?
+          </h2>
+          <p class="mx-auto mt-6 max-w-xl text-lg leading-8 text-white/90">
+            Start building your workout programs today. Free to use, no credit card required.
+          </p>
+          <div class="mt-10 flex items-center justify-center gap-x-6">
+            <%= link_to "Get Started", signup_path, class: "rounded-sm bg-white px-6 py-3 text-base font-semibold text-[rgb(139,115,85)] hover:bg-gray-50 transition-colors shadow-sm" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white">
+      <div class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+        <p class="text-center text-sm leading-6 text-[rgb(107,114,128)]">
+          Made by <%= link_to "@ideasasylum", "https://bsky.app/profile/jamie.ideasasylum.com", class: "font-medium text-[rgb(139,115,85)] hover:text-[rgb(115,95,70)]", target: "_blank", rel: "noopener" %>,
+          for <%= link_to "@ideasasylum", "https://jamie.ideasasylum.com", class: "font-medium text-[rgb(139,115,85)] hover:text-[rgb(115,95,70)]", target: "_blank", rel: "noopener" %>—because
+          he likes wombats and forgets his rehab workouts.
         </p>
-        <%= link_to "Logout",
-          logout_path,
-          data: { turbo_method: :delete },
-          class: "inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700" %>
       </div>
-    <% else %>
-      <div class="flex gap-4 justify-center">
-        <%= link_to "Sign In",
-          signin_path,
-          class: "inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700" %>
-        <%= link_to "Sign Up",
-          signup_path,
-          class: "inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-gray-50" %>
-      </div>
-    <% end %>
+    </footer>
   </div>
-</div>
+<% end %>
