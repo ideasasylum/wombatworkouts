@@ -12,7 +12,7 @@
           <div class="flex lg:flex-1">
             <span class="text-2xl font-bold text-[rgb(26,26,26)]">Wombat Workouts</span>
           </div>
-          <div class="flex gap-x-6">
+          <div class="flex items-center gap-x-6">
             <%= link_to "Sign In", signin_path, class: "text-sm font-semibold text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)]" %>
             <%= link_to "Sign Up", signup_path, class: "rounded-sm bg-[rgb(139,115,85)] px-4 py-2 text-sm font-semibold text-white hover:bg-[rgb(115,95,70)] transition-colors" %>
           </div>
@@ -90,10 +90,10 @@
           </div>
           <div class="flex flex-col gap-y-4 border-l-2 border-[rgb(139,115,85)] pl-6">
             <dt class="text-lg font-semibold text-[rgb(26,26,26)]">
-              Built by a Wombat Fan
+              Easy Program Sharing
             </dt>
             <dd class="text-base leading-7 text-[rgb(107,114,128)]">
-              Made with care by someone who actually needs this. No VC money, no aggressive growth targets, no annoying upsells—just a simple tool that does what it says.
+              Found a great workout program? Share it with friends, family, or your physical therapist with a simple link. They can copy it to their own account and customize it to their needs.
             </dd>
           </div>
         </dl>
@@ -120,11 +120,16 @@
     <!-- Footer -->
     <footer class="bg-white">
       <div class="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-        <p class="text-center text-sm leading-6 text-[rgb(107,114,128)]">
-          Made by <%= link_to "@ideasasylum", "https://bsky.app/profile/jamie.ideasasylum.com", class: "font-medium text-[rgb(139,115,85)] hover:text-[rgb(115,95,70)]", target: "_blank", rel: "noopener" %>,
-          for <%= link_to "@ideasasylum", "https://jamie.ideasasylum.com", class: "font-medium text-[rgb(139,115,85)] hover:text-[rgb(115,95,70)]", target: "_blank", rel: "noopener" %>—because
-          he likes wombats and forgets his rehab workouts.
-        </p>
+        <div class="text-center space-y-2">
+          <p class="text-sm leading-6 text-[rgb(107,114,128)]">
+            Made by <%= link_to "@ideasasylum", "https://bsky.app/profile/jamie.ideasasylum.com", class: "font-medium text-[rgb(139,115,85)] hover:text-[rgb(115,95,70)]", target: "_blank", rel: "noopener" %>,
+            for <%= link_to "@ideasasylum", "https://jamie.ideasasylum.com", class: "font-medium text-[rgb(139,115,85)] hover:text-[rgb(115,95,70)]", target: "_blank", rel: "noopener" %>—because
+            he likes wombats and forgets his rehab workouts.
+          </p>
+          <p class="text-xs leading-5 text-[rgb(107,114,128)] italic">
+            This may break at any time. Use at your own risk. 🦘
+          </p>
+        </div>
       </div>
     </footer>
   </div>
