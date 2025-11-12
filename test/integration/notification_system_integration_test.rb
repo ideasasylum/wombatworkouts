@@ -30,7 +30,7 @@ class NotificationSystemIntegrationTest < ActionDispatch::IntegrationTest
       reminder: {
         program_id: @program.id,
         days_of_week: [current_day],
-        time: 1.hour.ago.strftime("%H:%M"),
+        time: 30.minutes.ago.strftime("%H:%M"),
         timezone: "UTC"
       }
     }
@@ -53,33 +53,31 @@ class NotificationSystemIntegrationTest < ActionDispatch::IntegrationTest
 
   # Test 2: Invalid subscription error handled gracefully without crashing job
   test "invalid push subscription error handled gracefully" do
-    begin
-      # Create reminder for current day
-      current_day = Time.current.strftime("%A").downcase
-      reminder = @user.reminders.create!(
-        program: @program,
-        days_of_week: [current_day],
-        time: 1.hour.ago,
-        timezone: "UTC"
-      )
+    # Create reminder for current day
+    current_day = Time.current.strftime("%A").downcase
+    reminder = @user.reminders.create!(
+      program: @program,
+      days_of_week: [current_day],
+      time: 30.minutes.ago,
+      timezone: "UTC"
+    )
 
-      # Override stub to raise InvalidSubscription error
-      WebPush.define_singleton_method(:payload_send) do |**args|
-        raise WebPush::InvalidSubscription.new("Endpoint not valid", "invalid endpoint")
-      end
-
-      # Send notification - should not raise error
-      assert_nothing_raised do
-        SendPushNotificationJob.perform_now(reminder.id)
-      end
-
-      # Reminder should still be marked as sent despite subscription error
-      reminder.reload
-      assert_not_nil reminder.last_sent_at
-    ensure
-      # Restore the default stub for other tests
-      WebPush.define_singleton_method(:payload_send) { |**args| nil }
+    # Override stub to raise InvalidSubscription error
+    WebPush.define_singleton_method(:payload_send) do |**args|
+      raise WebPush::InvalidSubscription.new("Endpoint not valid", "invalid endpoint")
     end
+
+    # Send notification - should not raise error
+    assert_nothing_raised do
+      SendPushNotificationJob.perform_now(reminder.id)
+    end
+
+    # Reminder should still be marked as sent despite subscription error
+    reminder.reload
+    assert_not_nil reminder.last_sent_at
+  ensure
+    # Restore the default stub for other tests
+    WebPush.define_singleton_method(:payload_send) { |**args| nil }
   end
 
   # Test 3: Timezone conversion accuracy
@@ -88,8 +86,8 @@ class NotificationSystemIntegrationTest < ActionDispatch::IntegrationTest
     ny_time = Time.current.in_time_zone("America/New_York")
     current_day = ny_time.strftime("%A").downcase
 
-    # Set time to 1 hour ago in New York time
-    scheduled_time = (ny_time - 1.hour).strftime("%H:%M")
+    # Set time to 30 minutes ago in New York time
+    scheduled_time = (ny_time - 30.minutes).strftime("%H:%M")
 
     reminder = @user.reminders.create!(
       program: @program,
@@ -113,7 +111,7 @@ class NotificationSystemIntegrationTest < ActionDispatch::IntegrationTest
     # Set time to 1 hour in the future
     scheduled_time = (pacific_time + 1.hour).strftime("%H:%M")
 
-    reminder = @user.reminders.create!(
+    @user.reminders.create!(
       program: @program,
       days_of_week: [current_day],
       time: scheduled_time,
@@ -129,7 +127,7 @@ class NotificationSystemIntegrationTest < ActionDispatch::IntegrationTest
   # Test 5: Multiple subscriptions all receive notification
   test "notification sent to all user subscriptions" do
     # Create second subscription
-    subscription2 = @user.push_subscriptions.create!(
+    @user.push_subscriptions.create!(
       endpoint: "https://fcm.googleapis.com/fcm/send/test456",
       p256dh_key: "test_p256dh_key_2",
       auth_key: "test_auth_key_2"
@@ -200,7 +198,7 @@ class NotificationSystemIntegrationTest < ActionDispatch::IntegrationTest
 
     # Try to update other user's reminder
     patch reminder_path(other_reminder), params: {
-      reminder: { enabled: false }
+      reminder: {enabled: false}
     }
 
     # Should be redirected with alert
@@ -249,7 +247,7 @@ class NotificationSystemIntegrationTest < ActionDispatch::IntegrationTest
   # Test 10: Reminder not sent twice on same day
   test "reminder not sent twice on same day even if job runs multiple times" do
     current_day = Time.current.strftime("%A").downcase
-    reminder = @user.reminders.create!(
+    @user.reminders.create!(
       program: @program,
       days_of_week: [current_day],
       time: 1.hour.ago,

@@ -65,7 +65,7 @@ class PwaInfrastructureTest < ActionDispatch::IntegrationTest
   # Test 5: Application layout includes manifest link
   test "application layout includes PWA manifest link" do
     # Create a user to access a page
-    user = User.create!(email: "test@example.com")
+    User.create!(email: "test@example.com")
 
     # Visit a page that uses the application layout
     get root_path

@@ -12,7 +12,7 @@ class ReminderCheckJobTest < ActiveJob::TestCase
     reminder = @user.reminders.create!(
       program: @program,
       days_of_week: [current_day],
-      time: 1.hour.ago,  # Past the scheduled time
+      time: 30.minutes.ago,  # Past the scheduled time but within 1 hour window
       timezone: "UTC",
       enabled: true
     )
@@ -24,10 +24,10 @@ class ReminderCheckJobTest < ActiveJob::TestCase
 
   test "does not enqueue notification for disabled reminder" do
     current_day = Time.current.strftime("%A").downcase
-    reminder = @user.reminders.create!(
+    @user.reminders.create!(
       program: @program,
       days_of_week: [current_day],
-      time: 1.hour.ago,
+      time: 30.minutes.ago,
       timezone: "UTC",
       enabled: false
     )
@@ -39,10 +39,10 @@ class ReminderCheckJobTest < ActiveJob::TestCase
 
   test "does not enqueue notification for reminder already sent today" do
     current_day = Time.current.strftime("%A").downcase
-    reminder = @user.reminders.create!(
+    @user.reminders.create!(
       program: @program,
       days_of_week: [current_day],
-      time: 1.hour.ago,
+      time: 30.minutes.ago,
       timezone: "UTC",
       enabled: true,
       last_sent_at: Time.current  # Already sent today
@@ -56,10 +56,10 @@ class ReminderCheckJobTest < ActiveJob::TestCase
   test "does not enqueue notification for reminder with wrong day" do
     # Get tomorrow's day
     tomorrow_day = (Time.current + 1.day).strftime("%A").downcase
-    reminder = @user.reminders.create!(
+    @user.reminders.create!(
       program: @program,
       days_of_week: [tomorrow_day],
-      time: 1.hour.ago,
+      time: 30.minutes.ago,
       timezone: "UTC",
       enabled: true
     )
