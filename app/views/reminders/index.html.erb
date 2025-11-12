@@ -136,27 +136,28 @@
               </div>
 
               <div class="flex items-center space-x-4">
-                <!-- Toggle Switch -->
-                <label class="relative inline-flex items-center cursor-pointer">
-                  <%= check_box_tag "enabled", "1", reminder.enabled,
-                    class: "sr-only peer",
-                    data: {
-                      "reminder-id": reminder.id,
-                      "action": "change->reminder-toggle#toggle"
-                    } %>
-                  <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[rgb(26,26,26)]"></div>
-                  <span class="ms-3 text-sm text-[rgb(107,114,128)]" data-reminder-toggle-target="statusText">
-                    <%= reminder.enabled? ? "On" : "Off" %>
-                  </span>
-                </label>
-
                 <!-- Delete Button -->
                 <%= button_to reminder_path(reminder),
                   method: :delete,
-                  class: "inline-flex items-center px-3 py-2 border border-[rgb(204,204,204)] text-button text-[rgb(26,26,26)] bg-white hover:bg-gray-50 rounded-sm transition-colors min-h-[44px]",
+                  class: "inline-flex items-center px-3 py-2 text-button text-[rgb(26,26,26)] bg-white hover:bg-gray-50 rounded-sm transition-colors min-h-[44px]",
                   form: { data: { turbo_confirm: "Are you sure you want to delete this reminder?" } } do %>
                   <%= render "shared/icons/trash", class: "w-5 h-5" %>
                 <% end %>
+
+              <!-- Toggle Switch -->
+              <label class="relative inline-flex items-center cursor-pointer">
+                <%= check_box_tag "enabled", "1", reminder.enabled,
+                  class: "sr-only peer",
+                  data: {
+                    "reminder-id": reminder.id,
+                    "action": "change->reminder-toggle#toggle"
+                  } %>
+                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[rgb(26,26,26)]"></div>
+                <span class="ms-3 text-sm text-[rgb(107,114,128)]" data-reminder-toggle-target="statusText">
+                  <%= reminder.enabled? ? "On" : "Off" %>
+                </span>
+              </label>
+
               </div>
             </div>
           </div>
