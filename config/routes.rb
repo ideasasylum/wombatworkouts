@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   post "/signin", to: "sessions#create_signin", as: :create_signin
   post "/signin/verify", to: "sessions#handle_authentication", as: :verify_signin
   delete "/logout", to: "sessions#destroy", as: :logout
+  get "/session/health", to: "sessions#health_check", as: :session_health
 
   # Dashboard
   get "/dashboard", to: "dashboard#index", as: :dashboard
