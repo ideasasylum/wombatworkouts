@@ -16,6 +16,7 @@ class User < ApplicationRecord
   has_many :workouts, dependent: :destroy
   has_many :push_subscriptions, dependent: :destroy
   has_many :reminders, dependent: :destroy
+  has_many :account_recoveries, dependent: :destroy
 
   # Normalization (Rails 7.1+)
   normalizes :email, with: ->(email) { email.strip.downcase }

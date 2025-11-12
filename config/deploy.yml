@@ -46,6 +46,7 @@ env:
     - APPSIGNAL_PUSH_API_KEY
     - VAPID_PUBLIC_KEY
     - VAPID_PRIVATE_KEY
+    - POSTMARK_API_TOKEN
   clear:
     # Run the Solid Queue Supervisor inside the web server's Puma process to do jobs.
     # When you start using multiple servers, you should split out job processing to a dedicated machine.

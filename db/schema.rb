@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_09_210004) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_12_152256) do
+  create_table "account_recoveries", force: :cascade do |t|
+    t.string "code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "used_at"
+    t.integer "user_id", null: false
+    t.index ["code"], name: "index_account_recoveries_on_code", unique: true
+    t.index ["user_id"], name: "index_account_recoveries_on_user_id"
+  end
+
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -142,6 +153,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_09_210004) do
     t.index ["user_id"], name: "index_workouts_on_user_id"
   end
 
+  add_foreign_key "account_recoveries", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "credentials", "users", on_delete: :cascade

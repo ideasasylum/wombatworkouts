@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+  # Account Recovery routes
+  get "/account_recovery", to: "account_recoveries#new", as: :new_account_recovery
+  post "/account_recovery", to: "account_recoveries#create", as: :create_account_recovery
+  get "/account_recovery/verify", to: "account_recoveries#verify", as: :verify_account_recovery
+  post "/account_recovery/confirm", to: "account_recoveries#confirm", as: :confirm_account_recovery
+  get "/account_recovery/register", to: "account_recoveries#register", as: :register_account_recovery
+  post "/account_recovery/register", to: "account_recoveries#register"
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

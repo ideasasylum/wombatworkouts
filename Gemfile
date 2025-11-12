@@ -34,6 +34,9 @@ gem "activerecord-session_store"
 # Web Push notifications with VAPID
 gem "web-push", "~> 3.0"
 
+# Email delivery with Postmark
+gem "postmark-rails"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[windows jruby]
 
