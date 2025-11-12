@@ -82,12 +82,12 @@
           <%= f.label :days_of_week, "Days of Week", class: "block text-sm font-medium text-[rgb(26,26,26)] mb-2" %>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <% Reminder::VALID_DAYS.each do |day| %>
-              <label class="flex items-center space-x-2 p-2 border border-[rgb(204,204,204)] rounded-sm hover:bg-gray-50 cursor-pointer min-h-[44px]">
+              <label class="relative flex items-center justify-center p-2 border border-[rgb(204,204,204)] rounded-sm cursor-pointer min-h-[44px] transition-colors has-[:checked]:bg-[rgb(26,26,26)] has-[:checked]:text-white has-[:checked]:border-[rgb(26,26,26)] hover:bg-gray-50 has-[:checked]:hover:bg-[rgb(40,40,40)]">
                 <%= f.check_box :days_of_week,
-                  { multiple: true, checked: false, class: "rounded border-gray-300 text-gray-900 focus:ring-gray-900" },
+                  { multiple: true, checked: false, class: "sr-only" },
                   day,
                   nil %>
-                <span class="text-sm"><%= day.capitalize %></span>
+                <span class="text-sm font-medium"><%= day.capitalize %></span>
               </label>
             <% end %>
           </div>
