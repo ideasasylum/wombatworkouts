@@ -55,7 +55,14 @@ class WorkoutCompletionViewTest < ApplicationSystemTestCase
     assert_text "Squats"
 
     # Assert completed badges (check icons only, no text)
-    assert_selector ".inline-flex.items-center svg", count: 3
+    # Look for SVG icons specifically in the exercise list area, excluding navbar
+    exercise_badges = all(".inline-flex.items-center svg").select do |svg|
+      # Exclude SVGs in the navbar by checking parent elements
+      !svg.find(:xpath, "./ancestor::nav", visible: :all, wait: false).present?
+    rescue
+      true
+    end
+    assert_equal 3, exercise_badges.count, "Expected 3 exercise badge SVGs"
 
     # Assert action button is present
     assert_link "Done"
