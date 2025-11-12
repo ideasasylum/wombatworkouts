@@ -9,23 +9,23 @@
 #     priority: 2
 #     schedule: at 5am every day
 
-# Development and test: Run every hour to check for due reminders
+# Development and test: Run every 5 minutes to check for due reminders
 default: &default
   reminder_check:
     class: ReminderCheckJob
     queue: default
-    schedule: every hour
+    schedule: every 5 minutes
 
 production:
   clear_solid_queue_finished_jobs:
     command: "SolidQueue::Job.clear_finished_in_batches(sleep_between_batches: 0.3)"
     schedule: every hour at minute 12
 
-  # Production: Also run every hour to check for due reminders
+  # Production: Run every 5 minutes for accurate reminder delivery
   reminder_check:
     class: ReminderCheckJob
     queue: default
-    schedule: every hour
+    schedule: every 5 minutes
 
 development:
   <<: *default
