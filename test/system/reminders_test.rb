@@ -19,8 +19,11 @@ class RemindersTest < ApplicationSystemTestCase
 
     # Fill in the reminder form
     select @program.title, from: "reminder_program_id"
-    check "reminder_days_of_week_monday"
-    check "reminder_days_of_week_wednesday"
+
+    # Click the labels for Monday and Wednesday (checkboxes are hidden with sr-only)
+    find("label", text: "Monday").click
+    find("label", text: "Wednesday").click
+
     fill_in "reminder_time", with: "09:00"
 
     click_button "Create Reminder"
