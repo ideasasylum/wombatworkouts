@@ -4,7 +4,16 @@ class ExercisesController < ApplicationController
   before_action :set_exercise_and_authorize, only: [:show, :edit, :update, :destroy, :move]
 
   def new
-    @exercise = @program.exercises.build
+    @library_exercises = current_user.library_exercises.alphabetical
+
+    if params[:library_exercise_id].present?
+      library_exercise = current_user.library_exercises.find_by(id: params[:library_exercise_id])
+      @exercise = @program.exercises.build(library_exercise&.attributes_for_exercise || {})
+      @from_library = library_exercise.present?
+    else
+      @exercise = @program.exercises.build
+      @from_library = false
+    end
   end
 
   def show
@@ -18,8 +27,11 @@ class ExercisesController < ApplicationController
   def create
     @exercise = @program.exercises.build(exercise_params)
     @exercise.position = (@program.exercises.maximum(:position) || 0) + 1
+    from_library = params[:from_library] == "1"
 
     if @exercise.save
+      save_to_library(@exercise) unless from_library
+
       respond_to do |format|
         format.turbo_stream
         format.html { redirect_to @program, notice: "Exercise added successfully" }
@@ -99,5 +111,13 @@ class ExercisesController < ApplicationController
 
   def exercise_params
     params.require(:exercise).permit(:name, :repeat_count, :video_url, :description, :position)
+  end
+
+  def save_to_library(exercise)
+    current_user.library_exercises.create(
+      name: exercise.name,
+      video_url: exercise.video_url,
+      description: exercise.description
+    )
   end
 end
