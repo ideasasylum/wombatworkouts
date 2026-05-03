@@ -1,4 +1,7 @@
 <%= form_with model: exercise, url: exercise.new_record? ? program_exercises_path(program) : exercise_path(exercise), class: "space-y-4" do |f| %>
+  <% if exercise.new_record? && local_assigns[:from_library] %>
+    <%= hidden_field_tag :from_library, "1" %>
+  <% end %>
   <% if exercise.errors.any? %>
     <div class="rounded-sm bg-red-50 p-4 border border-red-200">
       <div class="flex">

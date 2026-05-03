@@ -1,5 +1,40 @@
 <%= turbo_frame_tag "exercise-form-frame" do %>
-  <div class="mb-6 bg-white rounded-sm shadow-sm p-6">
-    <%= render 'exercises/form', program: @program, exercise: @exercise %>
+  <div class="mb-6 bg-white rounded-sm shadow-sm p-6 space-y-6">
+    <% if @library_exercises.any? %>
+      <div data-controller="library-picker">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-medium text-[rgb(26,26,26)]">Add from your library</h3>
+          <button type="button"
+                  data-action="click->library-picker#toggle"
+                  class="text-sm text-[rgb(107,114,128)] hover:text-[rgb(26,26,26)] transition-colors">
+            <span data-library-picker-target="showLabel" class="<%= 'hidden' if @from_library %>">Show <%= pluralize(@library_exercises.size, 'saved exercise') %></span>
+            <span data-library-picker-target="hideLabel" class="<%= 'hidden' unless @from_library %>">Hide library</span>
+          </button>
+        </div>
+
+        <div data-library-picker-target="list" class="<%= 'hidden' unless @from_library %> space-y-2 max-h-96 overflow-y-auto pr-1">
+          <% @library_exercises.each do |library_exercise| %>
+            <%= link_to new_program_exercise_path(@program, library_exercise_id: library_exercise.id),
+                  data: { turbo_frame: "exercise-form-frame" },
+                  class: "block w-full text-left p-3 border border-[rgb(204,204,204)] rounded-sm hover:bg-gray-50 transition-colors flex items-center justify-between gap-3 min-h-[44px]" do %>
+              <div class="flex-grow min-w-0">
+                <div class="text-sm font-medium text-[rgb(26,26,26)] truncate"><%= library_exercise.name %></div>
+                <% if library_exercise.video_url.present? %>
+                  <div class="text-xs text-[rgb(107,114,128)]">Has video</div>
+                <% end %>
+              </div>
+              <span class="text-xs text-[rgb(107,114,128)] flex-shrink-0">Use</span>
+            <% end %>
+          <% end %>
+        </div>
+
+        <div class="border-t border-[rgb(229,229,229)] my-6"></div>
+        <h3 class="text-base font-medium text-[rgb(26,26,26)] mb-3">
+          <%= @from_library ? "Set the repeat count and add it" : "Or create a new exercise" %>
+        </h3>
+      </div>
+    <% end %>
+
+    <%= render 'exercises/form', program: @program, exercise: @exercise, from_library: @from_library %>
   </div>
 <% end %>

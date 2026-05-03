@@ -86,6 +86,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_03_155425) do
     t.index ["program_id"], name: "index_exercises_on_program_id"
   end
 
+  create_table "library_exercises", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.string "video_url"
+    t.index ["user_id"], name: "index_library_exercises_on_user_id"
+  end
+
   create_table "programs", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
@@ -159,6 +169,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_03_155425) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "credentials", "users", on_delete: :cascade
   add_foreign_key "exercises", "programs", on_delete: :cascade
+  add_foreign_key "library_exercises", "users"
   add_foreign_key "programs", "users", on_delete: :cascade
   add_foreign_key "push_subscriptions", "users", on_delete: :cascade
   add_foreign_key "reminders", "programs", on_delete: :cascade
