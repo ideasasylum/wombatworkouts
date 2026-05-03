@@ -3,10 +3,11 @@
 
 WebAuthn.configure do |config|
   # Set the allowed origins based on the environment
-  # In development: https://local.wombatworkouts.com:3000 (SSL required for WebAuthn)
+  # In development: https://local.wombatworkouts.com:<PORT> (SSL required for WebAuthn)
   # In production: Use the actual production domain (HTTPS required)
   config.allowed_origins = if Rails.env.development?
-    ["https://local.wombatworkouts.com:3000"]
+    port = ENV.fetch("PORT", 3000)
+    ["https://local.wombatworkouts.com:#{port}"]
   elsif Rails.env.test?
     ["https://local.wombatworkouts.com:3000"]
   else
