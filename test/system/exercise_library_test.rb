@@ -46,7 +46,7 @@ class ExerciseLibraryTest < ApplicationSystemTestCase
     user.library_exercises.create!(name: "Original Name")
 
     visit library_exercises_path
-    click_link "Edit exercise"
+    click_link "Original Name"
 
     fill_in "Exercise Name", with: "Renamed exercise"
     click_button "Update Exercise"
