@@ -1,7 +1,7 @@
 class McpController < ActionController::API
-  include PersonalAccessTokenAuthentication
+  include McpAuthentication
 
-  before_action :authenticate_personal_access_token!
+  before_action :authenticate_mcp!
 
   def handle
     server = MCP::Server.new(

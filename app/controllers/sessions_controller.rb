@@ -204,13 +204,10 @@ class SessionsController < ApplicationController
   end
 
   def create_user_session(user)
-    # Clear old session data
+    return_to = session[:return_to]
     reset_session
-
-    # Create new session
     session[:user_id] = user.id
-
-    # Regenerate session ID for security
+    session[:return_to] = return_to if return_to
     request.session_options[:renew] = true
   end
 end
