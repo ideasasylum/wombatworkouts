@@ -13,7 +13,7 @@ class ExerciseLibraryTest < ApplicationSystemTestCase
 
     exercise_name = "Library exercise #{Time.current.to_i}"
     fill_in "Exercise Name", with: exercise_name
-    fill_in "Repeat Count", with: "10"
+    fill_in "Sets", with: "10"
     click_button "Add Exercise"
 
     assert_text exercise_name
@@ -31,7 +31,7 @@ class ExerciseLibraryTest < ApplicationSystemTestCase
     click_link exercise_name
 
     assert_field "Exercise Name", with: exercise_name
-    fill_in "Repeat Count", with: "5"
+    fill_in "Sets", with: "5"
     click_button "Add Exercise"
 
     assert_text exercise_name
