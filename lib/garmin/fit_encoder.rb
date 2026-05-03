@@ -19,11 +19,11 @@ module Garmin
 
     # FIT base types — id is what gets written into the definition record.
     BASE_TYPE = {
-      enum:    {id: 0x00, size: 1, pack: "C"},
-      uint8:   {id: 0x02, size: 1, pack: "C"},
-      string:  {id: 0x07, size: 1, pack: nil},
-      uint16:  {id: 0x84, size: 2, pack: "v"},
-      uint32:  {id: 0x86, size: 4, pack: "V"},
+      enum: {id: 0x00, size: 1, pack: "C"},
+      uint8: {id: 0x02, size: 1, pack: "C"},
+      string: {id: 0x07, size: 1, pack: nil},
+      uint16: {id: 0x84, size: 2, pack: "v"},
+      uint32: {id: 0x86, size: 4, pack: "V"},
       uint32z: {id: 0x8C, size: 4, pack: "V"}
     }.freeze
 
@@ -46,26 +46,26 @@ module Garmin
       ],
       workout: [
         [254, 2, :uint16], # message_index
-        [4,   1, :enum],   # sport
-        [5,   4, :uint32z], # capabilities
-        [6,   2, :uint16], # num_valid_steps
-        [11,  1, :enum]    # sub_sport
+        [4, 1, :enum],   # sport
+        [5, 4, :uint32z], # capabilities
+        [6, 2, :uint16], # num_valid_steps
+        [11, 1, :enum]    # sub_sport
         # wkt_name (field 8) is appended dynamically because string size varies.
       ],
       workout_step: [
         [254, 2, :uint16], # message_index
-        [1,   1, :enum],   # duration_type
-        [2,   4, :uint32], # duration_value
-        [3,   1, :enum],   # target_type
-        [7,   1, :enum],   # intensity
-        [10,  2, :uint16], # exercise_category
-        [11,  2, :uint16]  # exercise_name
+        [1, 1, :enum],   # duration_type
+        [2, 4, :uint32], # duration_value
+        [3, 1, :enum],   # target_type
+        [7, 1, :enum],   # intensity
+        [10, 2, :uint16], # exercise_category
+        [11, 2, :uint16]  # exercise_name
         # wkt_step_name (field 0) is appended dynamically.
       ],
       exercise_title: [
         [254, 2, :uint16], # message_index
-        [0,   2, :uint16], # exercise_category
-        [1,   2, :uint16] # exercise_name
+        [0, 2, :uint16], # exercise_category
+        [1, 2, :uint16] # exercise_name
         # wkt_step_name (field 2) is appended dynamically.
       ]
     }.freeze
@@ -188,33 +188,33 @@ module Garmin
     def workout_values(program, num_valid_steps)
       {
         254 => 0,
-        4   => SPORT_TRAINING,
-        5   => 0,
-        6   => num_valid_steps,
-        11  => SUB_SPORT_STRENGTH,
-        8   => program.title.to_s
+        4 => SPORT_TRAINING,
+        5 => 0,
+        6 => num_valid_steps,
+        11 => SUB_SPORT_STRENGTH,
+        8 => program.title.to_s
       }
     end
 
     def workout_step_values(message_index, name, reps, exercise_category, exercise_name)
       {
         254 => message_index,
-        1   => DURATION_REPS,
-        2   => reps,
-        3   => TARGET_OPEN,
-        7   => INTENSITY_ACTIVE,
-        10  => exercise_category,
-        11  => exercise_name,
-        0   => name.to_s
+        1 => DURATION_REPS,
+        2 => reps,
+        3 => TARGET_OPEN,
+        7 => INTENSITY_ACTIVE,
+        10 => exercise_category,
+        11 => exercise_name,
+        0 => name.to_s
       }
     end
 
     def exercise_title_values(name_id, title)
       {
         254 => name_id,
-        0   => EXERCISE_CATEGORY_UNKNOWN,
-        1   => name_id,
-        2   => title.to_s
+        0 => EXERCISE_CATEGORY_UNKNOWN,
+        1 => name_id,
+        2 => title.to_s
       }
     end
   end
