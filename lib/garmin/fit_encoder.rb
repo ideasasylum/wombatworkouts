@@ -105,20 +105,19 @@ module Garmin
       body << definition_record(:workout_step, step_fields)
 
       title_fields = FIELDS[:exercise_title] + [[2, EXERCISE_TITLE_SIZE, :string]]
-      title_def_emitted = false
+      body << definition_record(:exercise_title, title_fields)
 
+      # Emit an exercise_title row for every exercise so the watch falls back
+      # to the user's free-text label if it doesn't recognize the (category,
+      # exercise_name) pair from its built-in localization table.
       step_index = 0
+      title_index = 0
       program.exercises.order(:position).each do |exercise|
         category, name = ExerciseMapping.lookup(exercise.name)
+        name = title_index if category == EXERCISE_CATEGORY_UNKNOWN
 
-        if category == EXERCISE_CATEGORY_UNKNOWN
-          unless title_def_emitted
-            body << definition_record(:exercise_title, title_fields)
-            title_def_emitted = true
-          end
-          name = step_index # synthetic exercise_name id, scoped to category=unknown
-          body << data_record(:exercise_title, title_fields, exercise_title_values(name, exercise.name))
-        end
+        body << data_record(:exercise_title, title_fields, exercise_title_values(title_index, category, name, exercise.name))
+        title_index += 1
 
         exercise.repeat_count.times do |set_idx|
           step_name = "#{exercise.name} #{set_idx + 1}/#{exercise.repeat_count}"
@@ -209,11 +208,11 @@ module Garmin
       }
     end
 
-    def exercise_title_values(name_id, title)
+    def exercise_title_values(message_index, category, exercise_name, title)
       {
-        254 => name_id,
-        0 => EXERCISE_CATEGORY_UNKNOWN,
-        1 => name_id,
+        254 => message_index,
+        0 => category,
+        1 => exercise_name,
         2 => title.to_s
       }
     end

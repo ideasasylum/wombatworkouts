@@ -58,6 +58,22 @@ class Garmin::FitEncoderTest < ActiveSupport::TestCase
     assert_operator bytes.bytesize, :>, 0
   end
 
+  test "emits an exercise_title for every exercise, including mapped ones" do
+    program = build_program(title: "Mixed", exercises: [
+      ExerciseStub.new("Calf raises", 1, 10, 1),
+      ExerciseStub.new("Mystery move", 1, 8, 2)
+    ])
+    bytes = Garmin::FitEncoder.encode_program(program)
+
+    # exercise_title global msg num is 264 (uint16 LE = 0x08 0x01).
+    title_def_marker = "\x00\x00\x08\x01".b
+    assert_includes bytes, title_def_marker, "should emit exercise_title definition"
+
+    # Both names should appear in the body as exercise_title text.
+    assert_includes bytes, "Calf raises".b
+    assert_includes bytes, "Mystery move".b
+  end
+
   test "Crc16 matches reference vectors" do
     # Empty input → 0
     assert_equal 0, Garmin::FitEncoder::Crc16.compute("")

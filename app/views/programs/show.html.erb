@@ -68,9 +68,9 @@
                 type: :secondary,
                 size: :base,
                 url: export_garmin_program_path(@program),
-                html_options: { class: "w-full" } %>
+                html_options: { class: "w-full", data: { turbo: false } } %>
               <p class="mt-2 text-xs text-gray-500 text-center">
-                Download a .fit file to upload to Garmin Connect
+                Connect your watch via USB and copy the .fit file into the GARMIN/Workouts folder
               </p>
             </div>
           <% end %>
