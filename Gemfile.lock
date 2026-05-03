@@ -175,6 +175,9 @@ GEM
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
     json (2.19.4)
+    json-schema (6.2.0)
+      addressable (~> 2.8)
+      bigdecimal (>= 3.1, < 5)
     jwt (3.1.2)
       base64
     kamal (2.8.1)
@@ -202,6 +205,8 @@ GEM
       net-smtp
     marcel (1.1.0)
     matrix (0.4.3)
+    mcp (0.14.0)
+      json-schema (>= 4.1)
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
@@ -476,6 +481,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   kamal
+  mcp
   postmark-rails
   propshaft
   puma (>= 5.0)

@@ -33,7 +33,7 @@
       <div class="flex items-center space-x-4">
         <!-- Desktop User Email and Logout (hidden on mobile) -->
         <div class="hidden md:flex items-center space-x-4">
-          <span class="text-sm text-[rgb(107,114,128)]"><%= current_user.email %></span>
+          <%= link_to current_user.email, personal_access_tokens_path, class: "text-sm text-[rgb(107,114,128)] hover:text-[rgb(26,26,26)] transition-colors" %>
           <%= button_to "Log out",
             logout_path,
             method: :delete,
@@ -86,7 +86,7 @@
 
         <!-- User info and logout -->
         <div class="border-t border-[rgb(204,204,204)] p-4 space-y-4">
-          <div class="text-sm text-[rgb(107,114,128)]"><%= current_user.email %></div>
+          <%= link_to current_user.email, personal_access_tokens_path, class: "block text-sm text-[rgb(107,114,128)] hover:text-[rgb(26,26,26)]", data: { action: "click->mobile-menu#close" } %>
           <%= button_to "Log out",
             logout_path,
             method: :delete,

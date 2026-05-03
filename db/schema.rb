@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_03_155425) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_03_165408) do
   create_table "account_recoveries", force: :cascade do |t|
     t.string "code", null: false
     t.datetime "created_at", null: false
@@ -96,6 +96,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_03_155425) do
     t.index ["user_id"], name: "index_library_exercises_on_user_id"
   end
 
+  create_table "personal_access_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "last_used_at"
+    t.string "name", null: false
+    t.datetime "revoked_at"
+    t.string "token_digest", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["token_digest"], name: "index_personal_access_tokens_on_token_digest", unique: true
+    t.index ["user_id"], name: "index_personal_access_tokens_on_user_id"
+  end
+
   create_table "programs", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
@@ -170,6 +182,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_03_155425) do
   add_foreign_key "credentials", "users", on_delete: :cascade
   add_foreign_key "exercises", "programs", on_delete: :cascade
   add_foreign_key "library_exercises", "users"
+  add_foreign_key "personal_access_tokens", "users", on_delete: :cascade
   add_foreign_key "programs", "users", on_delete: :cascade
   add_foreign_key "push_subscriptions", "users", on_delete: :cascade
   add_foreign_key "reminders", "programs", on_delete: :cascade

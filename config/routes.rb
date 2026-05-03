@@ -62,6 +62,22 @@ Rails.application.routes.draw do
   # Reminders routes
   resources :reminders, only: [:index, :create, :update, :destroy]
 
+  # MCP server (single endpoint per the MCP spec)
+  post "/mcp", to: "mcp#handle"
+
+  # Personal access tokens for the JSON API and MCP
+  resources :personal_access_tokens, path: "settings/tokens", only: [:index, :new, :create, :destroy]
+
+  # JSON API
+  namespace :api do
+    namespace :v1 do
+      resources :programs, param: :uuid, only: [:index, :show, :create, :update, :destroy] do
+        resources :exercises, only: [:create], param: :id
+      end
+      resources :exercises, only: [:update, :destroy]
+    end
+  end
+
   # Defines the root path route ("/")
   root "home#index"
 

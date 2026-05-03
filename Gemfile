@@ -25,6 +25,9 @@ gem "jbuilder"
 # WebAuthn passwordless authentication
 gem "webauthn"
 
+# Model Context Protocol server (for AI integration)
+gem "mcp"
+
 # Markdown rendering
 gem "redcarpet"
 
