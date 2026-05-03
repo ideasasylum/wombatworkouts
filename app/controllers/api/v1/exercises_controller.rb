@@ -58,11 +58,11 @@ module Api
       end
 
       def exercise_params
-        params.permit(:name, :repeat_count, :description, :video_url, :position)
+        params.permit(:name, :repeat_count, :reps, :description, :video_url, :position)
       end
 
       def update_params
-        params.permit(:name, :repeat_count, :description, :video_url, :position)
+        params.permit(:name, :repeat_count, :reps, :description, :video_url, :position)
       end
 
       def reposition!(new_position)

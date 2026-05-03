@@ -27,6 +27,26 @@ module Api
         assert_equal 4, body["position"]
       end
 
+      test "create accepts reps and includes it in the response" do
+        post "/api/v1/programs/#{@program.uuid}/exercises",
+          params: {name: "Pushup", repeat_count: 3, reps: 12}.to_json,
+          headers: auth_headers
+        assert_response :created
+        body = JSON.parse(response.body)
+        assert_equal 12, body["reps"]
+        assert_equal 3, body["repeat_count"]
+        assert_equal 12, Exercise.find(body["id"]).reps
+      end
+
+      test "create defaults reps to 1 when omitted" do
+        post "/api/v1/programs/#{@program.uuid}/exercises",
+          params: {name: "Plank round", repeat_count: 5}.to_json,
+          headers: auth_headers
+        assert_response :created
+        body = JSON.parse(response.body)
+        assert_equal 1, body["reps"]
+      end
+
       test "create with explicit position shifts existing exercises" do
         post "/api/v1/programs/#{@program.uuid}/exercises",
           params: {name: "Incline", repeat_count: 5, position: 2}.to_json,
@@ -62,6 +82,17 @@ module Api
         @e1.reload
         assert_equal "Bench v2", @e1.name
         assert_equal 8, @e1.repeat_count
+      end
+
+      test "update can change reps independently of repeat_count" do
+        patch "/api/v1/exercises/#{@e1.id}",
+          params: {reps: 6}.to_json,
+          headers: auth_headers
+        assert_response :ok
+        body = JSON.parse(response.body)
+        assert_equal 6, body["reps"]
+        assert_equal 5, body["repeat_count"]
+        assert_equal 6, @e1.reload.reps
       end
 
       test "update can move an exercise down (resequences others)" do

@@ -164,6 +164,17 @@ class McpControllerTest < ActionDispatch::IntegrationTest
     assert @user.programs.find_by(uuid: parsed["uuid"])
   end
 
+  test "create_program accepts reps and persists it; defaults to 1 when omitted" do
+    result = call_tool("create_program",
+      title: "Mixed",
+      exercises: [
+        {name: "Push-ups", repeat_count: 3, reps: 10},
+        {name: "Farmer carry", repeat_count: 5}
+      ])
+    parsed = JSON.parse(text_from(result))
+    assert_equal [10, 1], parsed["exercises"].map { |e| e["reps"] }
+  end
+
   test "create_program rejects exercises missing required fields via schema" do
     assert_no_difference -> { Program.where(user: @user).count } do
       post_mcp jsonrpc("tools/call", {
@@ -195,6 +206,18 @@ class McpControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["Bench", "OHP", "Pushup"], names
   end
 
+  test "add_exercise accepts reps" do
+    text = text_from(call_tool("add_exercise",
+      program_uuid: @program.uuid,
+      name: "Pushup",
+      repeat_count: 3,
+      reps: 12))
+    parsed = JSON.parse(text)
+    pushup = parsed["exercises"].find { |e| e["name"] == "Pushup" }
+    assert_equal 3, pushup["repeat_count"]
+    assert_equal 12, pushup["reps"]
+  end
+
   test "add_exercise inserts at the given position" do
     call_tool("add_exercise",
       program_uuid: @program.uuid,
@@ -208,6 +231,13 @@ class McpControllerTest < ActionDispatch::IntegrationTest
   test "update_exercise changes attributes" do
     call_tool("update_exercise", exercise_id: @e1.id, repeat_count: 8)
     assert_equal 8, @e1.reload.repeat_count
+  end
+
+  test "update_exercise can change reps independently of repeat_count" do
+    call_tool("update_exercise", exercise_id: @e1.id, reps: 7)
+    @e1.reload
+    assert_equal 7, @e1.reps
+    assert_equal 5, @e1.repeat_count
   end
 
   test "update_exercise repositions and resequences" do
@@ -242,6 +272,17 @@ class McpControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["Squat", "Lunge"], parsed["exercises"].map { |e| e["name"] }
     assert_nil Exercise.find_by(id: @e1.id)
     assert_nil Exercise.find_by(id: @e2.id)
+  end
+
+  test "replace_exercises persists per-item reps" do
+    text = text_from(call_tool("replace_exercises",
+      program_uuid: @program.uuid,
+      exercises: [
+        {name: "Squat", repeat_count: 3, reps: 8},
+        {name: "Lunge", repeat_count: 5}
+      ]))
+    parsed = JSON.parse(text)
+    assert_equal [8, 1], parsed["exercises"].map { |e| e["reps"] }
   end
 
   test "successful tool calls bump the token's last_used_at" do
