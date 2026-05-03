@@ -2,8 +2,34 @@
 ruby = "3.4.7"
 node = "22.12.0"
 
+[tasks.setup]
+description = "Install gems and generate local SSL certs via mkcert"
+run = """
+set -e
+
+if ! command -v mkcert >/dev/null 2>&1; then
+  if command -v brew >/dev/null 2>&1; then
+    echo "Installing mkcert via Homebrew..."
+    brew install mkcert nss
+  else
+    echo "mkcert not found and Homebrew is unavailable. Install mkcert manually: https://github.com/FiloSottile/mkcert" >&2
+    exit 1
+  fi
+fi
+
+mkcert -install
+
+if [ ! -f local.wombatworkouts.com.pem ] || [ ! -f local.wombatworkouts.com-key.pem ]; then
+  echo "Generating SSL certs for local.wombatworkouts.com..."
+  mkcert local.wombatworkouts.com
+fi
+
+bundle install
+"""
+
 [tasks.dev]
 description = "Start the local development server"
+env = { DEV_SIGNIN_EMAILS = "jamie@example.com" }
 run = "bin/dev"
 
 [tasks.test]

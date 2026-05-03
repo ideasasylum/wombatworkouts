@@ -1,4 +1,7 @@
 <%= form_with model: exercise, url: exercise.new_record? ? program_exercises_path(program) : exercise_path(exercise), class: "space-y-4" do |f| %>
+  <% if exercise.new_record? && local_assigns[:from_library] %>
+    <%= hidden_field_tag :from_library, "1" %>
+  <% end %>
   <% if exercise.errors.any? %>
     <div class="rounded-sm bg-red-50 p-4 border border-red-200">
       <div class="flex">
@@ -34,20 +37,38 @@
     <% end %>
   </div>
 
-  <div>
-    <%= f.label :repeat_count, "Repeat Count", class: "form-label" %>
-    <%= f.number_field :repeat_count,
-          required: true,
-          min: 1,
-          inputmode: "numeric",
-          pattern: "[0-9]*",
-          placeholder: "e.g., 10, 15, 20",
-          class: "form-input #{exercise.errors[:repeat_count].any? ? 'border-red-300' : ''}" %>
-    <% if exercise.errors[:repeat_count].any? %>
-      <p class="mt-1 text-sm text-red-600">
-        <%= exercise.errors.full_messages_for(:repeat_count).join(', ') %>
-      </p>
-    <% end %>
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <%= f.label :repeat_count, "Sets", class: "form-label" %>
+      <%= f.number_field :repeat_count,
+            required: true,
+            min: 1,
+            inputmode: "numeric",
+            pattern: "[0-9]*",
+            placeholder: "e.g., 3",
+            class: "form-input #{exercise.errors[:repeat_count].any? ? 'border-red-300' : ''}" %>
+      <% if exercise.errors[:repeat_count].any? %>
+        <p class="mt-1 text-sm text-red-600">
+          <%= exercise.errors.full_messages_for(:repeat_count).join(', ') %>
+        </p>
+      <% end %>
+    </div>
+
+    <div>
+      <%= f.label :reps, "Reps per set", class: "form-label" %>
+      <%= f.number_field :reps,
+            required: true,
+            min: 1,
+            inputmode: "numeric",
+            pattern: "[0-9]*",
+            placeholder: "e.g., 10",
+            class: "form-input #{exercise.errors[:reps].any? ? 'border-red-300' : ''}" %>
+      <% if exercise.errors[:reps].any? %>
+        <p class="mt-1 text-sm text-red-600">
+          <%= exercise.errors.full_messages_for(:reps).join(', ') %>
+        </p>
+      <% end %>
+    </div>
   </div>
 
   <div>

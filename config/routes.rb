@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   resources :programs do
     member do
       post :duplicate  # Task Group 2.3: Add duplicate route
+      get :export_garmin
     end
     resources :exercises, only: [:new, :create], shallow: true do
       member do
@@ -43,6 +44,9 @@ Rails.application.routes.draw do
 
   # Shallow nested exercises routes (show, edit, update and destroy)
   resources :exercises, only: [:show, :edit, :update, :destroy]
+
+  # Personal exercise library
+  resources :library_exercises, path: "library", only: [:index, :edit, :update, :destroy]
 
   # Workouts routes
   resources :workouts, except: [:edit] do
@@ -76,4 +80,11 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root "home#index"
+
+  if Rails.env.development?
+    constraints(->(req) { req.local? }) do
+      get "/__dev/signin", to: "dev_sessions#new", as: :dev_signin
+      post "/__dev/signin", to: "dev_sessions#create"
+    end
+  end
 end

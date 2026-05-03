@@ -47,6 +47,7 @@ class Program < ApplicationRecord
         duplicated_program.exercises.create!(
           name: exercise.name,
           repeat_count: exercise.repeat_count,
+          reps: exercise.reps,
           description: exercise.description,
           video_url: exercise.video_url,
           position: exercise.position

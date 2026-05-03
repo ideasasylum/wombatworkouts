@@ -198,4 +198,52 @@ class ProgramsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Exercise 1", duplicated.exercises.order(:position).first.name
     assert_equal "Exercise 2", duplicated.exercises.order(:position).last.name
   end
+
+  # export_garmin
+  test "owner can download a .fit file" do
+    @program.exercises.create!(name: "Squats", repeat_count: 3, reps: 10, position: 1)
+    sign_in_as(@user)
+
+    get export_garmin_program_path(@program)
+
+    assert_response :success
+    assert_equal "application/vnd.ant.fit", response.media_type
+    assert_match(/attachment/, response.headers["Content-Disposition"])
+    assert_match(/\.fit/, response.headers["Content-Disposition"])
+    # FIT header sentinel
+    assert_equal ".FIT", response.body[8, 4]
+  end
+
+  test "non-owner cannot export" do
+    @program.exercises.create!(name: "Squats", repeat_count: 3, reps: 10, position: 1)
+    sign_in_as(@other_user)
+
+    get export_garmin_program_path(@program)
+
+    assert_redirected_to programs_path
+    assert_equal "You don't have permission to export this program", flash[:alert]
+  end
+
+  test "export requires authentication" do
+    get export_garmin_program_path(@program)
+    assert_redirected_to signin_path
+  end
+
+  test "export of empty program redirects with alert" do
+    sign_in_as(@user)
+    get export_garmin_program_path(@program)
+    assert_redirected_to program_path(@program)
+    assert_match(/at least one exercise/, flash[:alert])
+  end
+
+  test "export rejects programs with too many steps" do
+    @program.exercises.create!(name: "Squats", repeat_count: 51, reps: 10, position: 1)
+    sign_in_as(@user)
+
+    get export_garmin_program_path(@program)
+
+    assert_redirected_to program_path(@program)
+    assert_match(/max 50 steps/, flash[:alert])
+    assert_match(/51/, flash[:alert])
+  end
 end

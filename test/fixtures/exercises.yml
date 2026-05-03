@@ -7,6 +7,7 @@
 #  name         :string           not null
 #  position     :integer          not null
 #  repeat_count :integer          not null
+#  reps         :integer          default(10), not null
 #  video_url    :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
@@ -15,6 +16,7 @@
 pushups:
   name: "Push-ups"
   repeat_count: 3
+  reps: 10
   position: 1
   video_url: "https://youtube.com/pushups"
   program: strength_program
@@ -22,6 +24,7 @@ pushups:
 squats:
   name: "Squats"
   repeat_count: 2
+  reps: 8
   position: 2
   video_url: "https://youtube.com/squats"
   program: strength_program

@@ -64,4 +64,45 @@ class ExercisesControllerTest < ActionDispatch::IntegrationTest
 
     assert_equal 0, Exercise.where(program_id: @program.id).count
   end
+
+  test "create auto-saves the exercise to the user's library" do
+    sign_in_as(@user)
+    assert_difference -> { @user.library_exercises.count }, 1 do
+      post program_exercises_path(@program),
+        params: {exercise: {name: "Burpees", repeat_count: 12, video_url: "https://example.com/v", description: "form"}},
+        as: :turbo_stream
+    end
+    library_exercise = @user.library_exercises.order(:created_at).last
+    assert_equal "Burpees", library_exercise.name
+    assert_equal "https://example.com/v", library_exercise.video_url
+    assert_equal "form", library_exercise.description
+  end
+
+  test "create does not save to library when from_library flag is set" do
+    sign_in_as(@user)
+    assert_no_difference -> { @user.library_exercises.count } do
+      post program_exercises_path(@program),
+        params: {exercise: {name: "Lunges", repeat_count: 8}, from_library: "1"},
+        as: :turbo_stream
+    end
+  end
+
+  test "new with library_exercise_id pre-fills the form" do
+    sign_in_as(@user)
+    library_exercise = @user.library_exercises.create!(name: "Reverse lunges", video_url: "https://ex.com/r")
+
+    get new_program_exercise_path(@program, library_exercise_id: library_exercise.id)
+    assert_response :success
+    assert_select "input[name='exercise[name]'][value=?]", "Reverse lunges"
+    assert_select "input[name='from_library'][value='1']"
+  end
+
+  test "new ignores library_exercise_id from another user" do
+    sign_in_as(@user)
+    other_library_exercise = @other_user.library_exercises.create!(name: "Their exercise")
+
+    get new_program_exercise_path(@program, library_exercise_id: other_library_exercise.id)
+    assert_response :success
+    assert_select "input[name='exercise[name]'][value=?]", "Their exercise", count: 0
+  end
 end
