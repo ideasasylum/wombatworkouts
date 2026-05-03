@@ -5,6 +5,8 @@ module Mcp
       description <<~TXT
         Add a single exercise to an existing program. By default the exercise is appended to the end. Pass `position` (1-indexed) to insert it earlier; existing exercises at and after that position will shift down by one.
 
+        #{SETS_AND_REPS_NOTE}
+
         #{LIBRARY_NOTE}
       TXT
 
@@ -12,7 +14,8 @@ module Mcp
         properties: {
           program_uuid: {type: "string"},
           name: {type: "string"},
-          repeat_count: {type: "integer", minimum: 1},
+          repeat_count: {type: "integer", minimum: 1, description: REPEAT_COUNT_DESC},
+          reps: {type: "integer", minimum: 1, description: REPS_DESC},
           description: {type: "string"},
           video_url: {type: "string"},
           position: {type: "integer", minimum: 1, description: "Optional 1-indexed position to insert at. Defaults to the end."}
@@ -20,7 +23,7 @@ module Mcp
         required: ["program_uuid", "name", "repeat_count"]
       )
 
-      def self.call(program_uuid:, name:, repeat_count:, server_context:, description: nil, video_url: nil, position: nil)
+      def self.call(program_uuid:, name:, repeat_count:, server_context:, reps: nil, description: nil, video_url: nil, position: nil)
         safely do
           user = current_user(server_context)
           program = find_program!(user, program_uuid)
@@ -35,13 +38,14 @@ module Mcp
               max_position + 1
             end
 
-            exercise = program.exercises.create!(
+            exercise = program.exercises.create!({
               name: name,
               repeat_count: repeat_count,
+              reps: reps,
               description: description,
               video_url: video_url,
               position: target
-            )
+            }.compact)
           end
 
           text_response(JSON.pretty_generate(program_summary(program.reload)))

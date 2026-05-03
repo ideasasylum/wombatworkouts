@@ -13,6 +13,8 @@ class McpController < ActionController::API
 
         A program is a named sequence of exercises that the user works through during a workout. Each exercise belongs to a single program; exercises created or modified through these tools are NOT added to the user's separate exercise library.
 
+        Each exercise has two count fields: `repeat_count` is the number of SETS, `reps` is the number of REPETITIONS PER SET (defaults to 1). For "3 sets of 10 push-ups" use repeat_count: 3, reps: 10. For round-based exercises that don't have a meaningful per-set rep count (e.g. a 1-minute carry done 5 times) use repeat_count: 5, reps: 1. See individual tool descriptions for more.
+
         Always summarize destructive changes (delete_program, remove_exercise, replace_exercises) to the user before calling them.
       TXT
       tools: [

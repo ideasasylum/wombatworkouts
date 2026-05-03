@@ -80,7 +80,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_03_210424) do
     t.integer "position", null: false
     t.integer "program_id", null: false
     t.integer "repeat_count", null: false
-    t.integer "reps", default: 10
+    t.integer "reps", default: 1
     t.datetime "updated_at", null: false
     t.string "video_url"
     t.index ["program_id", "position"], name: "index_exercises_on_program_id_and_position"

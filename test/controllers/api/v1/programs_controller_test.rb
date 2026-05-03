@@ -81,8 +81,8 @@ module Api
             title: "Pull Day",
             description: "Back & biceps",
             exercises: [
-              {name: "Pull-ups", repeat_count: 3},
-              {name: "Rows", repeat_count: 4, description: "barbell"}
+              {name: "Pull-ups", repeat_count: 3, reps: 8},
+              {name: "Rows", repeat_count: 4, reps: 10, description: "barbell"}
             ]
           }.to_json,
           headers: auth_headers
@@ -91,6 +91,7 @@ module Api
         assert_equal 2, body["exercises"].size
         assert_equal [1, 2], body["exercises"].map { |e| e["position"] }
         assert_equal ["Pull-ups", "Rows"], body["exercises"].map { |e| e["name"] }
+        assert_equal [8, 10], body["exercises"].map { |e| e["reps"] }
       end
 
       test "create rolls back the program if a nested exercise is invalid" do

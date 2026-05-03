@@ -7,6 +7,8 @@ module Mcp
 
         Use this when restructuring a program rather than diffing it manually. Always confirm with the user first.
 
+        #{SETS_AND_REPS_NOTE}
+
         #{LIBRARY_NOTE}
       TXT
 
@@ -19,7 +21,8 @@ module Mcp
               type: "object",
               properties: {
                 name: {type: "string"},
-                repeat_count: {type: "integer", minimum: 1},
+                repeat_count: {type: "integer", minimum: 1, description: REPEAT_COUNT_DESC},
+                reps: {type: "integer", minimum: 1, description: REPS_DESC},
                 description: {type: "string"},
                 video_url: {type: "string"}
               },
@@ -39,13 +42,14 @@ module Mcp
             program.exercises.destroy_all
             Array(exercises).each_with_index do |attrs, idx|
               attrs = attrs.transform_keys(&:to_sym)
-              program.exercises.create!(
+              program.exercises.create!({
                 name: attrs[:name],
                 repeat_count: attrs[:repeat_count],
+                reps: attrs[:reps],
                 description: attrs[:description],
                 video_url: attrs[:video_url],
                 position: idx + 1
-              )
+              }.compact)
             end
           end
 

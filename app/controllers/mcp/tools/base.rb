@@ -3,6 +3,19 @@ module Mcp
     class Base < ::MCP::Tool
       LIBRARY_NOTE = "Exercises created or modified by this tool live inside the program only and are never added to the user's exercise library."
 
+      SETS_AND_REPS_NOTE = <<~TXT.strip
+        SETS VS REPS:
+          - `repeat_count` is the number of SETS — how many times the user performs the exercise within the program.
+          - `reps` is the number of REPETITIONS PER SET — how many times the movement is performed in a single set. Defaults to 1.
+          Examples:
+            - "3 sets of 10 push-ups" → repeat_count: 3, reps: 10
+            - "5 rounds of 1 pull-up each" (or any non-rep movement like a 1-minute carry) → repeat_count: 5, reps: 1
+            - "4 × 5 deadlifts" → repeat_count: 4, reps: 5
+          When in doubt, set `reps: 1` and use `repeat_count` for the round/set count — that matches how single-movement exercises (e.g. timed holds, carries) are modeled today.
+      TXT
+      REPEAT_COUNT_DESC = "Number of SETS (how many times the user performs this exercise in the program). Must be at least 1. See the tool description for sets vs reps guidance."
+      REPS_DESC = "Number of REPETITIONS PER SET (how many times the movement is performed in a single set). Optional; defaults to 1 — set explicitly when the exercise has a meaningful per-set rep count. See the tool description for sets vs reps guidance."
+
       class << self
         def text_response(text)
           ::MCP::Tool::Response.new([{type: "text", text: text}])
@@ -39,6 +52,7 @@ module Mcp
             position: exercise.position,
             name: exercise.name,
             repeat_count: exercise.repeat_count,
+            reps: exercise.reps,
             description: exercise.description,
             video_url: exercise.video_url
           }.compact

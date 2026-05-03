@@ -8,7 +8,7 @@
 #  name             :string           not null
 #  position         :integer          not null
 #  repeat_count     :integer          not null
-#  reps             :integer          default(10)
+#  reps             :integer          default(1)
 #  video_url        :string
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
