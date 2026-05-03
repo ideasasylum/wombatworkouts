@@ -1,0 +1,24 @@
+# Fixtures use precomputed digests; see PersonalAccessTokenTest for digest generation.
+# These are not used by .authenticate (we don't know the raw token), only for association tests.
+# == Schema Information
+#
+# Table name: personal_access_tokens
+#
+#  id           :integer          not null, primary key
+#  last_used_at :datetime
+#  name         :string           not null
+#  revoked_at   :datetime
+#  token_digest :string           not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  user_id      :integer          not null
+#
+one:
+  user: one
+  name: Test token one
+  token_digest: <%= Digest::SHA256.hexdigest("fixture-token-one") %>
+
+two:
+  user: two
+  name: Test token two
+  token_digest: <%= Digest::SHA256.hexdigest("fixture-token-two") %>

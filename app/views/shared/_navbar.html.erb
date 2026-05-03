@@ -33,6 +33,7 @@
         <!-- Desktop User Email and Logout (hidden on mobile) -->
         <div class="hidden md:flex items-center space-x-4">
           <span class="text-sm text-[rgb(107,114,128)]"><%= current_user.email %></span>
+          <%= link_to "Tokens", personal_access_tokens_path, class: "text-button text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)] transition-colors" %>
           <%= button_to "Log out",
             logout_path,
             method: :delete,
@@ -80,6 +81,7 @@
             <%= render "shared/icons/bell", class: "w-5 h-5 mr-2" %>
             <span>Reminders</span>
           <% end %>
+          <%= link_to "Tokens", personal_access_tokens_path, class: "block text-body text-[rgb(26,26,26)] hover:bg-gray-100 p-3 rounded-sm", data: { action: "click->mobile-menu#close" } %>
         </div>
 
         <!-- User info and logout -->
