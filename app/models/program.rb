@@ -48,6 +48,7 @@ class Program < ApplicationRecord
           name: exercise.name,
           repeat_count: exercise.repeat_count,
           reps: exercise.reps,
+          duration_seconds: exercise.duration_seconds,
           description: exercise.description,
           video_url: exercise.video_url,
           position: exercise.position

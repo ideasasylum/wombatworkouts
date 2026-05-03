@@ -43,6 +43,45 @@
             <p class="text-[rgb(107,114,128)] mb-4">Set <%= @current_exercise["repeat_instance"] %> of <%= @current_exercise["repeat_total"] %></p>
           <% end %>
 
+          <% if @current_exercise["duration_seconds"].to_i > 0 %>
+            <div class="mb-6 w-full"
+                 data-controller="exercise-timer"
+                 data-exercise-timer-seconds-value="<%= @current_exercise["duration_seconds"] %>">
+              <div class="font-mono tabular-nums text-[rgb(26,26,26)] text-center leading-none text-[20vw] md:text-9xl" data-exercise-timer-target="display">0:00</div>
+              <div class="flex gap-3 mt-4">
+                <button type="button"
+                        data-exercise-timer-target="startButton"
+                        data-action="click->exercise-timer#start"
+                        class="flex-1 inline-flex items-center justify-center px-6 py-4 border border-transparent text-lg font-medium rounded-sm text-white bg-[rgb(26,26,26)] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 min-h-[56px]">
+                  Start
+                </button>
+                <button type="button"
+                        data-exercise-timer-target="pauseButton"
+                        data-action="click->exercise-timer#pause"
+                        style="display: none"
+                        class="flex-1 inline-flex items-center justify-center px-6 py-4 border border-transparent text-lg font-medium rounded-sm text-white bg-[rgb(26,26,26)] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 min-h-[56px]">
+                  Pause
+                </button>
+                <button type="button"
+                        data-exercise-timer-target="continueButton"
+                        data-action="click->exercise-timer#resume"
+                        style="display: none"
+                        class="flex-1 inline-flex items-center justify-center px-6 py-4 border border-transparent text-lg font-medium rounded-sm text-white bg-[rgb(26,26,26)] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 min-h-[56px]">
+                  Continue
+                </button>
+                <button type="button"
+                        data-exercise-timer-target="resetButton"
+                        data-action="click->exercise-timer#reset"
+                        style="display: none"
+                        class="flex-1 inline-flex items-center justify-center px-6 py-4 border border-[rgb(26,26,26)] text-lg font-medium rounded-sm text-[rgb(26,26,26)] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 min-h-[56px]">
+                  Reset
+                </button>
+              </div>
+            </div>
+          <% elsif @current_exercise["reps"].to_i > 0 %>
+            <p class="text-h3 text-[rgb(26,26,26)] mb-6"><%= pluralize(@current_exercise["reps"], "rep") %></p>
+          <% end %>
+
           <!-- Exercise description -->
           <% if @current_exercise["description"].present? %>
             <div class="mb-6">

@@ -1,7 +1,11 @@
 require "test_helper"
 
 class Garmin::FitEncoderTest < ActiveSupport::TestCase
-  ExerciseStub = Struct.new(:name, :repeat_count, :reps, :position)
+  ExerciseStub = Struct.new(:name, :repeat_count, :reps, :position, :duration_seconds) do
+    def initialize(name, repeat_count, reps, position, duration_seconds = nil)
+      super
+    end
+  end
 
   class ProgramStub
     attr_reader :title, :exercises
@@ -72,6 +76,31 @@ class Garmin::FitEncoderTest < ActiveSupport::TestCase
     # Both names should appear in the body as exercise_title text.
     assert_includes bytes, "Calf raises".b
     assert_includes bytes, "Mystery move".b
+  end
+
+  test "encodes time-based exercises with DURATION_TIME and milliseconds" do
+    program = build_program(title: "Hold", exercises: [
+      ExerciseStub.new("Plank", 1, nil, 1, 45)
+    ])
+    bytes = Garmin::FitEncoder.encode_program(program)
+
+    # Find the workout_step data record (local msg type 2 = LOCAL[:workout_step]).
+    # We'll scan from the end for the one byte preceding the step name. Easier: decode
+    # by locating a known step name in the body and reading backwards.
+    step_name = "Plank 1/1".b
+    name_offset = bytes.index(step_name)
+    refute_nil name_offset, "step name should appear in body"
+
+    # Step record layout (after local msg byte): msg_index(2) duration_type(1)
+    # duration_value(4) target(1) intensity(1) category(2) name(2) wkt_step_name(STEP_NAME_SIZE).
+    # So the wkt_step_name starts at offset 13 from the start of the data record.
+    record_start = name_offset - 14 # 1 byte for local msg + 13 fixed-field bytes
+    assert_equal Garmin::FitEncoder::LOCAL[:workout_step], bytes.bytes[record_start]
+
+    duration_type = bytes.bytes[record_start + 3]
+    duration_value = bytes[record_start + 4, 4].unpack1("V")
+    assert_equal Garmin::FitEncoder::DURATION_TIME, duration_type
+    assert_equal 45_000, duration_value
   end
 
   test "Crc16 matches reference vectors" do
