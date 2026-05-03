@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "setup": "mise trust && mise run setup",
+    "run": "bin/conductor-run"
+  }
+}
