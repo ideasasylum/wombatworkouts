@@ -80,8 +80,16 @@ class ProgramTest < ActiveSupport::TestCase
 
       assert_equal original_exercise.name, duplicated_exercise.name
       assert_equal original_exercise.repeat_count, duplicated_exercise.repeat_count
-      assert_equal original_exercise.description, duplicated_exercise.description
-      assert_equal original_exercise.video_url, duplicated_exercise.video_url
+      if original_exercise.description.nil?
+        assert_nil duplicated_exercise.description
+      else
+        assert_equal original_exercise.description, duplicated_exercise.description
+      end
+      if original_exercise.video_url.nil?
+        assert_nil duplicated_exercise.video_url
+      else
+        assert_equal original_exercise.video_url, duplicated_exercise.video_url
+      end
       assert_equal original_exercise.position, duplicated_exercise.position
       assert_not_equal original_exercise.id, duplicated_exercise.id
       assert_equal duplicated_program.id, duplicated_exercise.program_id

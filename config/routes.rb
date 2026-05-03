@@ -44,6 +44,9 @@ Rails.application.routes.draw do
   # Shallow nested exercises routes (show, edit, update and destroy)
   resources :exercises, only: [:show, :edit, :update, :destroy]
 
+  # Personal exercise library
+  resources :library_exercises, path: "library", only: [:index, :edit, :update, :destroy]
+
   # Workouts routes
   resources :workouts, except: [:edit] do
     member do
