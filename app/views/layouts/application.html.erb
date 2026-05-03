@@ -61,6 +61,12 @@
   </head>
 
   <body style="background-color: rgb(237, 242, 247);">
+    <% if Rails.env.development? && session[:dev_signed_in] %>
+      <div class="fixed top-0 inset-x-0 z-50 bg-yellow-400 text-yellow-900 text-center text-xs font-semibold py-1 border-b border-yellow-600">
+        DEV SESSION — signed in via /__dev/signin as <%= current_user&.email %>
+      </div>
+    <% end %>
+
     <%= render 'shared/navbar' if logged_in? %>
 
     <%= render 'shared/flash_messages' %>
