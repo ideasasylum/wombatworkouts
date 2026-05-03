@@ -2,13 +2,18 @@ module Mcp
   module Tools
     class UpdateExercise < Base
       tool_name "update_exercise"
-      description "Update one exercise's fields. Pass only the fields you want to change. Changing `position` resequences the other exercises in the program automatically."
+      description <<~TXT
+        Update one exercise's fields. Pass only the fields you want to change. Changing `position` resequences the other exercises in the program automatically.
+
+        #{SETS_AND_REPS_NOTE}
+      TXT
 
       input_schema(
         properties: {
           exercise_id: {type: "integer"},
           name: {type: "string"},
-          repeat_count: {type: "integer", minimum: 1},
+          repeat_count: {type: "integer", minimum: 1, description: REPEAT_COUNT_DESC},
+          reps: {type: "integer", minimum: 1, description: REPS_DESC},
           description: {type: "string"},
           video_url: {type: "string"},
           position: {type: "integer", minimum: 1}
@@ -16,7 +21,7 @@ module Mcp
         required: ["exercise_id"]
       )
 
-      def self.call(exercise_id:, server_context:, name: nil, repeat_count: nil, description: nil, video_url: nil, position: nil)
+      def self.call(exercise_id:, server_context:, name: nil, repeat_count: nil, reps: nil, description: nil, video_url: nil, position: nil)
         safely do
           user = current_user(server_context)
           exercise = find_exercise!(user, exercise_id)
@@ -25,6 +30,7 @@ module Mcp
           attrs = {}
           attrs[:name] = name unless name.nil?
           attrs[:repeat_count] = repeat_count unless repeat_count.nil?
+          attrs[:reps] = reps unless reps.nil?
           attrs[:description] = description unless description.nil?
           attrs[:video_url] = video_url unless video_url.nil?
 

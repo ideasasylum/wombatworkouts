@@ -56,7 +56,7 @@ module Api
       end
 
       def create_params
-        params.permit(:title, :description, exercises: [:name, :repeat_count, :description, :video_url])
+        params.permit(:title, :description, exercises: [:name, :repeat_count, :reps, :description, :video_url])
       end
 
       def update_params

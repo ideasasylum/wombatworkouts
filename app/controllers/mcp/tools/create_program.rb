@@ -5,6 +5,8 @@ module Mcp
       description <<~TXT
         Create a new workout program for the user, optionally with an initial set of exercises. The exercises are created in the order given, with positions assigned starting at 1.
 
+        #{SETS_AND_REPS_NOTE}
+
         #{LIBRARY_NOTE}
 
         Returns the created program with its uuid (use this in later tool calls).
@@ -21,7 +23,8 @@ module Mcp
               type: "object",
               properties: {
                 name: {type: "string"},
-                repeat_count: {type: "integer", minimum: 1, description: "How many sets/reps/rounds of this exercise."},
+                repeat_count: {type: "integer", minimum: 1, description: REPEAT_COUNT_DESC},
+                reps: {type: "integer", minimum: 1, description: REPS_DESC},
                 description: {type: "string"},
                 video_url: {type: "string"}
               },
@@ -41,13 +44,14 @@ module Mcp
             program.save!
             Array(exercises).each_with_index do |attrs, idx|
               attrs = attrs.transform_keys(&:to_sym)
-              program.exercises.create!(
+              program.exercises.create!({
                 name: attrs[:name],
                 repeat_count: attrs[:repeat_count],
+                reps: attrs[:reps],
                 description: attrs[:description],
                 video_url: attrs[:video_url],
                 position: idx + 1
-              )
+              }.compact)
             end
           end
 
