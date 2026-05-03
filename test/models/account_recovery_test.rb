@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: account_recoveries
+#
+#  id         :integer          not null, primary key
+#  code       :string           not null
+#  expires_at :datetime         not null
+#  used_at    :datetime
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  user_id    :integer          not null
+#
 require "test_helper"
 
 class AccountRecoveryTest < ActiveSupport::TestCase

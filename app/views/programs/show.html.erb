@@ -58,6 +58,22 @@
             size: :base,
             url: new_workout_path(program_id: @program.uuid),
             html_options: { class: "w-full" } %>
+
+          <% if @is_owner %>
+            <div class="mt-3">
+              <%= render "shared/button",
+                text: "Export to Garmin",
+                icon: "download",
+                icon_position: :left,
+                type: :secondary,
+                size: :base,
+                url: export_garmin_program_path(@program),
+                html_options: { class: "w-full" } %>
+              <p class="mt-2 text-xs text-gray-500 text-center">
+                Download a .fit file to upload to Garmin Connect
+              </p>
+            </div>
+          <% end %>
         <% else %>
           <div class="text-center p-6 bg-gray-50 rounded-sm">
             <p class="text-gray-700 mb-4">Sign in to start this workout and track your progress</p>

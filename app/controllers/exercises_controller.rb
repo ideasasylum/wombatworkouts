@@ -98,6 +98,6 @@ class ExercisesController < ApplicationController
   end
 
   def exercise_params
-    params.require(:exercise).permit(:name, :repeat_count, :video_url, :description, :position)
+    params.require(:exercise).permit(:name, :repeat_count, :reps, :video_url, :description, :position)
   end
 end
