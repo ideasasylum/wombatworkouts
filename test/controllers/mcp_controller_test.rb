@@ -41,10 +41,75 @@ class McpControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
-  test "rejects calls with revoked token" do
+  test "401 challenge advertises the protected-resource-metadata URL so claude.ai can discover OAuth" do
+    post_mcp jsonrpc("tools/list"), headers: {"Content-Type" => "application/json"}
+    assert_response :unauthorized
+    challenge = response.headers["WWW-Authenticate"]
+    assert_match(/Bearer/, challenge)
+    assert_includes challenge, %(resource_metadata="#{request.base_url}/.well-known/oauth-protected-resource")
+  end
+
+  test "rejects calls with revoked PAT" do
     @pat.revoke!
     post_mcp jsonrpc("tools/list")
     assert_response :unauthorized
+  end
+
+  test "rejects garbage token that doesn't match either auth path" do
+    post_mcp jsonrpc("tools/list"), headers: auth_headers("not-a-real-token")
+    assert_response :unauthorized
+  end
+
+  test "OAuth access token with mcp scope and matching audience works" do
+    application = Doorkeeper::Application.create!(
+      name: "Test client", redirect_uri: "https://example.com/cb",
+      scopes: "mcp", confidential: false, created_via_dcr: true
+    )
+    token = Doorkeeper::AccessToken.create!(
+      application: application,
+      resource_owner_id: @user.id,
+      scopes: "mcp",
+      resource: "http://www.example.com/mcp",
+      expires_in: 3600
+    )
+
+    post_mcp jsonrpc("tools/list"), headers: auth_headers(token.token)
+    assert_response :ok
+  end
+
+  test "OAuth token with mismatched resource is rejected" do
+    application = Doorkeeper::Application.create!(
+      name: "Test client", redirect_uri: "https://example.com/cb",
+      scopes: "mcp", confidential: false, created_via_dcr: true
+    )
+    token = Doorkeeper::AccessToken.create!(
+      application: application,
+      resource_owner_id: @user.id,
+      scopes: "mcp",
+      resource: "https://attacker.example/mcp",
+      expires_in: 3600
+    )
+
+    post_mcp jsonrpc("tools/list"), headers: auth_headers(token.token)
+    assert_response :unauthorized
+  end
+
+  test "OAuth token without mcp scope is rejected with insufficient_scope" do
+    application = Doorkeeper::Application.create!(
+      name: "Test client", redirect_uri: "https://example.com/cb",
+      scopes: "mcp", confidential: false, created_via_dcr: true
+    )
+    token = Doorkeeper::AccessToken.create!(
+      application: application,
+      resource_owner_id: @user.id,
+      scopes: "other",
+      resource: "http://www.example.com/mcp",
+      expires_in: 3600
+    )
+
+    post_mcp jsonrpc("tools/list"), headers: auth_headers(token.token)
+    assert_response :unauthorized
+    assert_match(/insufficient_scope/, response.headers["WWW-Authenticate"])
   end
 
   test "tools/list returns all 9 tools" do

@@ -1,4 +1,21 @@
 Rails.application.routes.draw do
+  # OAuth 2.1 for the MCP server (claude.ai remote-connector flow).
+  # We control /authorize ourselves; /token and /revoke use the stock Doorkeeper controllers.
+  use_doorkeeper do
+    skip_controllers :authorizations, :applications, :authorized_applications
+  end
+
+  scope module: "oauth" do
+    get "/.well-known/oauth-protected-resource", to: "metadata#protected_resource"
+    get "/.well-known/oauth-authorization-server", to: "metadata#authorization_server"
+
+    get "/oauth/authorize", to: "authorizations#new", as: :oauth_authorization
+    post "/oauth/authorize", to: "authorizations#create"
+    delete "/oauth/authorize", to: "authorizations#destroy"
+
+    post "/oauth/register", to: "registrations#create", as: :oauth_registration
+  end
+
   # Account Recovery routes
   get "/account_recovery", to: "account_recoveries#new", as: :new_account_recovery
   post "/account_recovery", to: "account_recoveries#create", as: :create_account_recovery
@@ -67,6 +84,9 @@ Rails.application.routes.draw do
 
   # Personal access tokens for the JSON API and MCP
   resources :personal_access_tokens, path: "settings/tokens", only: [:index, :new, :create, :destroy]
+
+  # Third-party OAuth apps (e.g. claude.ai) the user has authorized
+  resources :connected_apps, path: "settings/connected_apps", only: [:index, :destroy]
 
   # JSON API
   namespace :api do
