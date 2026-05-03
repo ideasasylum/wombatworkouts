@@ -55,7 +55,7 @@ class ExerciseLibraryTest < ApplicationSystemTestCase
     assert_no_text "Original Name"
 
     accept_confirm do
-      click_button "Delete exercise"
+      find('button[aria-label="Delete exercise"]').click
     end
 
     assert_text "Your library is empty"
