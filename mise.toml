@@ -29,6 +29,7 @@ bundle install
 
 [tasks.dev]
 description = "Start the local development server"
+env = { DEV_SIGNIN_EMAILS = "jamie@example.com" }
 run = "bin/dev"
 
 [tasks.test]
