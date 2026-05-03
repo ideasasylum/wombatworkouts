@@ -32,7 +32,7 @@ module Mcp
         required: ["title"]
       )
 
-      def self.call(title:, description: nil, exercises: [], server_context:)
+      def self.call(title:, server_context:, description: nil, exercises: [])
         safely do
           user = current_user(server_context)
           program = user.programs.new(title: title, description: description)

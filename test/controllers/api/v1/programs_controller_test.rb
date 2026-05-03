@@ -148,6 +148,15 @@ module Api
         get "/api/v1/programs", headers: auth_headers
         assert_not_nil @pat.reload.last_used_at
       end
+
+      test "create with nested exercises does not add to the user's exercise library" do
+        @user.library_exercises.create!(name: "Existing")
+        assert_no_difference -> { LibraryExercise.count } do
+          post "/api/v1/programs",
+            params: {title: "Pull", exercises: [{name: "Pull-up", repeat_count: 3}]}.to_json,
+            headers: auth_headers
+        end
+      end
     end
   end
 end

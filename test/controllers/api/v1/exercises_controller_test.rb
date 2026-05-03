@@ -109,6 +109,24 @@ module Api
         post "/api/v1/programs/#{@program.uuid}/exercises", params: {name: "x", repeat_count: 1}.to_json
         assert_response :unauthorized
       end
+
+      test "API exercise mutations never add to the user's exercise library" do
+        @user.library_exercises.create!(name: "Existing")
+
+        assert_no_difference -> { LibraryExercise.count } do
+          post "/api/v1/programs/#{@program.uuid}/exercises",
+            params: {name: "Pushup", repeat_count: 12}.to_json,
+            headers: auth_headers
+        end
+
+        assert_no_difference -> { LibraryExercise.count } do
+          patch "/api/v1/exercises/#{@e1.id}", params: {name: "Bench v2"}.to_json, headers: auth_headers
+        end
+
+        assert_no_difference -> { LibraryExercise.count } do
+          delete "/api/v1/exercises/#{@e2.id}", headers: auth_headers
+        end
+      end
     end
   end
 end

@@ -184,4 +184,42 @@ class McpControllerTest < ActionDispatch::IntegrationTest
     call_tool("list_programs")
     assert_not_nil @pat.reload.last_used_at
   end
+
+  # Load-bearing invariant: MCP write tools never add to the personal exercise
+  # library. Asserted per-tool so a regression is pinned to the offender.
+  test "no MCP write tool adds to the user's exercise library" do
+    @user.library_exercises.create!(name: "Existing library item")
+
+    assert_no_difference -> { LibraryExercise.count }, "create_program polluted the library" do
+      call_tool("create_program",
+        title: "Pull",
+        exercises: [{name: "Pull-up", repeat_count: 3}, {name: "Row", repeat_count: 5}])
+    end
+
+    assert_no_difference -> { LibraryExercise.count }, "update_program polluted the library" do
+      call_tool("update_program", uuid: @program.uuid, title: "Push v2", description: "new")
+    end
+
+    assert_no_difference -> { LibraryExercise.count }, "add_exercise polluted the library" do
+      call_tool("add_exercise", program_uuid: @program.uuid, name: "Pushup", repeat_count: 12)
+    end
+
+    assert_no_difference -> { LibraryExercise.count }, "update_exercise polluted the library" do
+      call_tool("update_exercise", exercise_id: @e1.id, name: "Bench Press", repeat_count: 8)
+    end
+
+    assert_no_difference -> { LibraryExercise.count }, "remove_exercise polluted the library" do
+      call_tool("remove_exercise", exercise_id: @e2.id)
+    end
+
+    assert_no_difference -> { LibraryExercise.count }, "replace_exercises polluted the library" do
+      call_tool("replace_exercises",
+        program_uuid: @program.uuid,
+        exercises: [{name: "Squat", repeat_count: 5}, {name: "Lunge", repeat_count: 10}])
+    end
+
+    assert_no_difference -> { LibraryExercise.count }, "delete_program polluted the library" do
+      call_tool("delete_program", uuid: @program.uuid)
+    end
+  end
 end

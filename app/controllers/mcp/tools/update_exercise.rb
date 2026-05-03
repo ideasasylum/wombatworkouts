@@ -16,7 +16,7 @@ module Mcp
         required: ["exercise_id"]
       )
 
-      def self.call(exercise_id:, name: nil, repeat_count: nil, description: nil, video_url: nil, position: nil, server_context:)
+      def self.call(exercise_id:, server_context:, name: nil, repeat_count: nil, description: nil, video_url: nil, position: nil)
         safely do
           user = current_user(server_context)
           exercise = find_exercise!(user, exercise_id)

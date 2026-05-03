@@ -20,7 +20,7 @@ module Mcp
         required: ["program_uuid", "name", "repeat_count"]
       )
 
-      def self.call(program_uuid:, name:, repeat_count:, description: nil, video_url: nil, position: nil, server_context:)
+      def self.call(program_uuid:, name:, repeat_count:, server_context:, description: nil, video_url: nil, position: nil)
         safely do
           user = current_user(server_context)
           program = find_program!(user, program_uuid)
@@ -28,7 +28,7 @@ module Mcp
           exercise = nil
           program.with_lock do
             max_position = program.exercises.maximum(:position) || 0
-            target = if position && position.between?(1, max_position)
+            target = if position&.between?(1, max_position)
               program.exercises.where("position >= ?", position).update_all("position = position + 1")
               position
             else

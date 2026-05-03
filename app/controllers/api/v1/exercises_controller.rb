@@ -10,7 +10,7 @@ module Api
         max_position = @program.exercises.maximum(:position) || 0
 
         @program.with_lock do
-          if requested_position && requested_position.between?(1, max_position)
+          if requested_position&.between?(1, max_position)
             @program.exercises.where("position >= ?", requested_position).update_all("position = position + 1")
             position = requested_position
           else

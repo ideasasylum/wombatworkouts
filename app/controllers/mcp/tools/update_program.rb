@@ -13,7 +13,7 @@ module Mcp
         required: ["uuid"]
       )
 
-      def self.call(uuid:, title: nil, description: nil, server_context:)
+      def self.call(uuid:, server_context:, title: nil, description: nil)
         safely do
           user = current_user(server_context)
           program = find_program!(user, uuid)
