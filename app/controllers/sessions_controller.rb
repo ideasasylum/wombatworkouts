@@ -33,7 +33,15 @@ class SessionsController < ApplicationController
 
   # Signin (Authentication) Actions
   def new_signin
-    # Render the signin form
+    # Generate a discoverable-credential challenge so the page can offer
+    # passkey autofill (conditional mediation) on the email field. The
+    # browser will only act on this if the user picks a passkey suggestion;
+    # otherwise the user can still submit their email and use the modal flow.
+    options = WebAuthn::Credential.options_for_get(user_verification: "preferred")
+    session[:webauthn_challenge] = options.challenge
+    session[:flow_type] = "authentication"
+    session.delete(:pending_email)
+    @conditional_options = options.as_json
   end
 
   def create_signin
@@ -113,15 +121,22 @@ class SessionsController < ApplicationController
     email = params[:email]&.strip&.downcase
     credential_response = JSON.parse(params[:credential_response])
 
-    user = User.find_by(email: email)
-    raise "User not found" unless user
-
     # Verify the credential
     webauthn_credential = WebAuthn::Credential.from_get(credential_response)
 
-    # Find matching credential
-    credential = user.credentials.find_by(external_id: webauthn_credential.id)
-    raise "Credential not found" unless credential
+    # Resolve the credential and user. With conditional UI we don't know
+    # the email up front — the browser hands us a credential discovered
+    # from the platform passkey store, so we look the user up via the
+    # credential's external_id instead.
+    if email.present?
+      user = User.find_by(email: email)
+      raise "User not found" unless user
+      credential = user.credentials.find_by(external_id: webauthn_credential.id)
+    else
+      credential = Credential.find_by(external_id: webauthn_credential.id)
+      user = credential&.user
+    end
+    raise "Credential not found" unless credential && user
 
     # Verify against stored challenge and public key
     webauthn_credential.verify(

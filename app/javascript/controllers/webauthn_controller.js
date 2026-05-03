@@ -6,7 +6,7 @@ export default class extends Controller {
   static values = {
     options: Object,
     email: String,
-    flow: String, // "registration" or "authentication"
+    flow: String, // "registration", "authentication", or "conditional"
     verifyUrl: String // URL to submit credential to
   }
 
@@ -22,6 +22,16 @@ export default class extends Controller {
       this.register()
     } else if (this.flowValue === "authentication") {
       this.authenticate()
+    } else if (this.flowValue === "conditional") {
+      this.authenticateConditional()
+    }
+  }
+
+  disconnect() {
+    // Abort any in-flight conditional get() so it doesn't leak across Turbo nav
+    if (this.abortController) {
+      this.abortController.abort()
+      this.abortController = null
     }
   }
 
@@ -92,6 +102,59 @@ export default class extends Controller {
     } catch (error) {
       this.hideLoading()
       this.handleAuthenticationError(error)
+    }
+  }
+
+  // Conditional UI: passkey appears as autofill suggestion in the email field.
+  // Browsers that support this skip the modal sheet entirely, sidestepping
+  // Safari's "set up a passkey" interception that breaks the modal flow.
+  async authenticateConditional() {
+    if (!window.PublicKeyCredential ||
+        typeof PublicKeyCredential.isConditionalMediationAvailable !== "function") {
+      return
+    }
+
+    const supported = await PublicKeyCredential.isConditionalMediationAvailable()
+    if (!supported) {
+      return
+    }
+
+    if (this.abortController) {
+      this.abortController.abort()
+    }
+    this.abortController = new AbortController()
+
+    try {
+      const options = this.prepareCredentialRequestOptions(this.optionsValue)
+      const credential = await navigator.credentials.get({
+        publicKey: options,
+        mediation: "conditional",
+        signal: this.abortController.signal
+      })
+
+      if (!credential) {
+        return
+      }
+
+      const credentialResponse = this.encodeCredentialForAuthentication(credential)
+      await this.submitCredential(credentialResponse)
+    } catch (error) {
+      if (error.name === "AbortError") {
+        return
+      }
+      console.error("Conditional authentication error:", error)
+    }
+  }
+
+  retry(event) {
+    if (event && typeof event.preventDefault === "function") {
+      event.preventDefault()
+    }
+    this.hideError()
+    if (this.flowValue === "registration") {
+      this.register()
+    } else if (this.flowValue === "authentication") {
+      this.authenticate()
     }
   }
 
@@ -167,12 +230,15 @@ export default class extends Controller {
       form.appendChild(csrfInput)
     }
 
-    // Add email
-    const emailInput = document.createElement("input")
-    emailInput.type = "hidden"
-    emailInput.name = "email"
-    emailInput.value = this.emailValue
-    form.appendChild(emailInput)
+    // Add email if known. Conditional UI submits without one — the server
+    // resolves the user from the credential's external_id.
+    if (this.hasEmailValue && this.emailValue.length > 0) {
+      const emailInput = document.createElement("input")
+      emailInput.type = "hidden"
+      emailInput.name = "email"
+      emailInput.value = this.emailValue
+      form.appendChild(emailInput)
+    }
 
     // Add credential response as JSON
     const credentialInput = document.createElement("input")

@@ -12,14 +12,27 @@
 
     <%# White card container for form %>
     <div class="bg-white rounded-sm shadow-sm p-8">
-      <%= turbo_frame_tag "signin_flow" do %>
+      <%# The webauthn controller is mounted on the turbo frame so that when
+          the email-first flow turbo-stream-replaces the frame, the controller
+          disconnects and aborts the in-flight conditional get() — preventing
+          two overlapping WebAuthn requests. %>
+      <%= turbo_frame_tag "signin_flow",
+            data: {
+              controller: "webauthn",
+              "webauthn-options-value": @conditional_options.to_json,
+              "webauthn-flow-value": "conditional",
+              "webauthn-verify-url-value": verify_signin_path
+            } do %>
         <%= form_with url: create_signin_path, method: :post, class: "space-y-6" do |f| %>
-          <%# Email input field %>
+          <%# Email input field. autocomplete="username webauthn" lets the
+              browser surface platform/3rd-party passkeys as autofill
+              suggestions when conditional mediation is supported. %>
           <div>
             <%= f.email_field :email,
                   required: true,
                   autofocus: true,
                   placeholder: "Email",
+                  autocomplete: "username webauthn",
                   class: "form-input" %>
           </div>
 
