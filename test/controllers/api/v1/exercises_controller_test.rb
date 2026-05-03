@@ -84,6 +84,30 @@ module Api
         assert_equal 8, @e1.repeat_count
       end
 
+      test "create accepts duration_seconds for time-based exercises" do
+        post "/api/v1/programs/#{@program.uuid}/exercises",
+          params: {name: "Plank", repeat_count: 3, duration_seconds: 45}.to_json,
+          headers: auth_headers
+        assert_response :created
+        body = JSON.parse(response.body)
+        assert_equal 45, body["duration_seconds"]
+        assert_nil body["reps"]
+        ex = Exercise.find(body["id"])
+        assert_equal 45, ex.duration_seconds
+        assert_nil ex.reps
+      end
+
+      test "update can switch a rep-based exercise to duration-based" do
+        @e1.update!(reps: 8)
+        patch "/api/v1/exercises/#{@e1.id}",
+          params: {reps: nil, duration_seconds: 30}.to_json,
+          headers: auth_headers
+        assert_response :ok
+        body = JSON.parse(response.body)
+        assert_equal 30, body["duration_seconds"]
+        assert_nil body["reps"]
+      end
+
       test "update can change reps independently of repeat_count" do
         patch "/api/v1/exercises/#{@e1.id}",
           params: {reps: 6}.to_json,

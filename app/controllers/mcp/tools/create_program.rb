@@ -25,6 +25,7 @@ module Mcp
                 name: {type: "string"},
                 repeat_count: {type: "integer", minimum: 1, description: REPEAT_COUNT_DESC},
                 reps: {type: "integer", minimum: 1, description: REPS_DESC},
+                duration_seconds: {type: "integer", minimum: 1, maximum: ::Exercise::MAX_DURATION_SECONDS, description: DURATION_SECONDS_DESC},
                 description: {type: "string"},
                 video_url: {type: "string"}
               },
@@ -44,14 +45,16 @@ module Mcp
             program.save!
             Array(exercises).each_with_index do |attrs, idx|
               attrs = attrs.transform_keys(&:to_sym)
-              program.exercises.create!({
+              create_attrs = normalize_effort!({
                 name: attrs[:name],
                 repeat_count: attrs[:repeat_count],
                 reps: attrs[:reps],
+                duration_seconds: attrs[:duration_seconds],
                 description: attrs[:description],
                 video_url: attrs[:video_url],
                 position: idx + 1
               }.compact)
+              program.exercises.create!(create_attrs)
             end
           end
 

@@ -4,17 +4,21 @@ module Mcp
       LIBRARY_NOTE = "Exercises created or modified by this tool live inside the program only and are never added to the user's exercise library."
 
       SETS_AND_REPS_NOTE = <<~TXT.strip
-        SETS VS REPS:
+        SETS, REPS, AND DURATION:
           - `repeat_count` is the number of SETS — how many times the user performs the exercise within the program.
           - `reps` is the number of REPETITIONS PER SET — how many times the movement is performed in a single set. Defaults to 1.
+          - `duration_seconds` is an alternative to `reps` for time-based exercises (e.g. a 45-second plank). Set EITHER `reps` OR `duration_seconds`, never both.
           Examples:
             - "3 sets of 10 push-ups" → repeat_count: 3, reps: 10
-            - "5 rounds of 1 pull-up each" (or any non-rep movement like a 1-minute carry) → repeat_count: 5, reps: 1
+            - "5 rounds of 1 pull-up each" → repeat_count: 5, reps: 1
             - "4 × 5 deadlifts" → repeat_count: 4, reps: 5
-          When in doubt, set `reps: 1` and use `repeat_count` for the round/set count — that matches how single-movement exercises (e.g. timed holds, carries) are modeled today.
+            - "3 × 45-second plank" → repeat_count: 3, duration_seconds: 45
+            - "Hold a hollow body for 30 seconds, twice" → repeat_count: 2, duration_seconds: 30
+          When in doubt, set `reps: 1` and use `repeat_count` for the round/set count — that matches how single-movement exercises are modeled today. Use `duration_seconds` only when the exercise is fundamentally time-based (holds, carries, timed conditioning intervals) rather than counted.
       TXT
       REPEAT_COUNT_DESC = "Number of SETS (how many times the user performs this exercise in the program). Must be at least 1. See the tool description for sets vs reps guidance."
-      REPS_DESC = "Number of REPETITIONS PER SET (how many times the movement is performed in a single set). Optional; defaults to 1 — set explicitly when the exercise has a meaningful per-set rep count. See the tool description for sets vs reps guidance."
+      REPS_DESC = "Number of REPETITIONS PER SET (how many times the movement is performed in a single set). Optional; defaults to 1 — set explicitly when the exercise has a meaningful per-set rep count. Mutually exclusive with `duration_seconds`. See the tool description for sets vs reps guidance."
+      DURATION_SECONDS_DESC = "DURATION PER SET in seconds for time-based exercises (e.g. 45 for a 45-second plank). Mutually exclusive with `reps` — set one or the other, not both. Maximum 86400 (24h)."
 
       class << self
         def text_response(text)
@@ -53,9 +57,20 @@ module Mcp
             name: exercise.name,
             repeat_count: exercise.repeat_count,
             reps: exercise.reps,
+            duration_seconds: exercise.duration_seconds,
             description: exercise.description,
             video_url: exercise.video_url
           }.compact
+        end
+
+        # If the caller passed duration_seconds but didn't pass reps, clear reps so
+        # the column default doesn't trip the model's "exactly one of reps /
+        # duration_seconds" validation.
+        def normalize_effort!(attrs)
+          if attrs[:duration_seconds].present? && !attrs.key?(:reps)
+            attrs[:reps] = nil
+          end
+          attrs
         end
 
         # Wraps the tool body so any expected failure (RecordNotFound, RecordInvalid)
