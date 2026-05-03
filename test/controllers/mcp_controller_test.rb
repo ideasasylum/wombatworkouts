@@ -274,6 +274,38 @@ class McpControllerTest < ActionDispatch::IntegrationTest
     assert_nil Exercise.find_by(id: @e2.id)
   end
 
+  test "create_program accepts duration_seconds and clears reps" do
+    result = call_tool("create_program",
+      title: "Hold",
+      exercises: [
+        {name: "Plank", repeat_count: 3, duration_seconds: 45}
+      ])
+    parsed = JSON.parse(text_from(result))
+    plank = parsed["exercises"].first
+    assert_equal 45, plank["duration_seconds"]
+    assert_nil plank["reps"]
+  end
+
+  test "add_exercise accepts duration_seconds" do
+    text = text_from(call_tool("add_exercise",
+      program_uuid: @program.uuid,
+      name: "Plank",
+      repeat_count: 3,
+      duration_seconds: 30))
+    parsed = JSON.parse(text)
+    plank = parsed["exercises"].find { |e| e["name"] == "Plank" }
+    assert_equal 30, plank["duration_seconds"]
+    assert_nil plank["reps"]
+  end
+
+  test "update_exercise can switch reps to duration" do
+    @e1.update!(reps: 10)
+    call_tool("update_exercise", exercise_id: @e1.id, duration_seconds: 60)
+    @e1.reload
+    assert_equal 60, @e1.duration_seconds
+    assert_nil @e1.reps
+  end
+
   test "replace_exercises persists per-item reps" do
     text = text_from(call_tool("replace_exercises",
       program_uuid: @program.uuid,

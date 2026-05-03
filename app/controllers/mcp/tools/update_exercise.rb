@@ -14,6 +14,7 @@ module Mcp
           name: {type: "string"},
           repeat_count: {type: "integer", minimum: 1, description: REPEAT_COUNT_DESC},
           reps: {type: "integer", minimum: 1, description: REPS_DESC},
+          duration_seconds: {type: "integer", minimum: 1, maximum: ::Exercise::MAX_DURATION_SECONDS, description: DURATION_SECONDS_DESC},
           description: {type: "string"},
           video_url: {type: "string"},
           position: {type: "integer", minimum: 1}
@@ -21,7 +22,7 @@ module Mcp
         required: ["exercise_id"]
       )
 
-      def self.call(exercise_id:, server_context:, name: nil, repeat_count: nil, reps: nil, description: nil, video_url: nil, position: nil)
+      def self.call(exercise_id:, server_context:, name: nil, repeat_count: nil, reps: nil, duration_seconds: nil, description: nil, video_url: nil, position: nil)
         safely do
           user = current_user(server_context)
           exercise = find_exercise!(user, exercise_id)
@@ -30,7 +31,13 @@ module Mcp
           attrs = {}
           attrs[:name] = name unless name.nil?
           attrs[:repeat_count] = repeat_count unless repeat_count.nil?
-          attrs[:reps] = reps unless reps.nil?
+          if !reps.nil?
+            attrs[:reps] = reps
+            attrs[:duration_seconds] = nil
+          elsif !duration_seconds.nil?
+            attrs[:duration_seconds] = duration_seconds
+            attrs[:reps] = nil
+          end
           attrs[:description] = description unless description.nil?
           attrs[:video_url] = video_url unless video_url.nil?
 

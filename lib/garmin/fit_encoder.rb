@@ -79,6 +79,7 @@ module Garmin
     # Enum values.
     SPORT_TRAINING = 10
     SUB_SPORT_STRENGTH = 20
+    DURATION_TIME = 0
     DURATION_REPS = 29
     TARGET_OPEN = 2
     INTENSITY_ACTIVE = 0
@@ -121,7 +122,7 @@ module Garmin
 
         exercise.repeat_count.times do |set_idx|
           step_name = "#{exercise.name} #{set_idx + 1}/#{exercise.repeat_count}"
-          values = workout_step_values(step_index, step_name, exercise.reps, category, name)
+          values = workout_step_values(step_index, step_name, exercise, category, name)
           body << data_record(:workout_step, step_fields, values)
           step_index += 1
         end
@@ -195,11 +196,17 @@ module Garmin
       }
     end
 
-    def workout_step_values(message_index, name, reps, exercise_category, exercise_name)
+    def workout_step_values(message_index, name, exercise, exercise_category, exercise_name)
+      duration_type, duration_value = if exercise.duration_seconds.present?
+        [DURATION_TIME, exercise.duration_seconds * 1000]
+      else
+        [DURATION_REPS, exercise.reps]
+      end
+
       {
         254 => message_index,
-        1 => DURATION_REPS,
-        2 => reps,
+        1 => duration_type,
+        2 => duration_value,
         3 => TARGET_OPEN,
         7 => INTENSITY_ACTIVE,
         10 => exercise_category,

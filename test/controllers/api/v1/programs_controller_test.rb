@@ -94,6 +94,22 @@ module Api
         assert_equal [8, 10], body["exercises"].map { |e| e["reps"] }
       end
 
+      test "create accepts duration_seconds for time-based nested exercises" do
+        post "/api/v1/programs",
+          params: {
+            title: "Hold Day",
+            exercises: [
+              {name: "Plank", repeat_count: 3, duration_seconds: 45}
+            ]
+          }.to_json,
+          headers: auth_headers
+        assert_response :created
+        body = JSON.parse(response.body)
+        ex = body["exercises"].first
+        assert_equal 45, ex["duration_seconds"]
+        assert_nil ex["reps"]
+      end
+
       test "create rolls back the program if a nested exercise is invalid" do
         assert_no_difference -> { Program.count } do
           post "/api/v1/programs",

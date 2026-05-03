@@ -32,7 +32,7 @@ module Api
         Program.transaction do
           program.save!
           exercise_attrs.each_with_index do |e, i|
-            program.exercises.create!(e.to_h.merge(position: i + 1))
+            program.exercises.create!(normalize_effort(e).merge(position: i + 1))
           end
         end
 
@@ -56,7 +56,7 @@ module Api
       end
 
       def create_params
-        params.permit(:title, :description, exercises: [:name, :repeat_count, :reps, :description, :video_url])
+        params.permit(:title, :description, exercises: [:name, :repeat_count, :reps, :duration_seconds, :description, :video_url])
       end
 
       def update_params

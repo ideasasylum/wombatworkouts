@@ -5,7 +5,7 @@ module Api
       before_action :set_exercise, only: [:update, :destroy]
 
       def create
-        attrs = exercise_params
+        attrs = normalize_effort(exercise_params)
         requested_position = attrs.delete(:position)&.to_i
         max_position = @program.exercises.maximum(:position) || 0
 
@@ -24,11 +24,11 @@ module Api
       end
 
       def update
-        attrs = update_params
-        new_position = attrs.delete(:position)&.to_i
+        attrs = normalize_effort(update_params)
+        new_position = attrs.delete(:position)&.then { |p| p.to_i }
 
         Exercise.transaction do
-          @exercise.update!(attrs) if attrs.to_h.any?
+          @exercise.update!(attrs) if attrs.any?
           reposition!(new_position) if new_position
         end
 
@@ -58,11 +58,11 @@ module Api
       end
 
       def exercise_params
-        params.permit(:name, :repeat_count, :reps, :description, :video_url, :position)
+        params.permit(:name, :repeat_count, :reps, :duration_seconds, :description, :video_url, :position)
       end
 
       def update_params
-        params.permit(:name, :repeat_count, :reps, :description, :video_url, :position)
+        params.permit(:name, :repeat_count, :reps, :duration_seconds, :description, :video_url, :position)
       end
 
       def reposition!(new_position)

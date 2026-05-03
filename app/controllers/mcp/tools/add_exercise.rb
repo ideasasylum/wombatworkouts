@@ -16,6 +16,7 @@ module Mcp
           name: {type: "string"},
           repeat_count: {type: "integer", minimum: 1, description: REPEAT_COUNT_DESC},
           reps: {type: "integer", minimum: 1, description: REPS_DESC},
+          duration_seconds: {type: "integer", minimum: 1, maximum: ::Exercise::MAX_DURATION_SECONDS, description: DURATION_SECONDS_DESC},
           description: {type: "string"},
           video_url: {type: "string"},
           position: {type: "integer", minimum: 1, description: "Optional 1-indexed position to insert at. Defaults to the end."}
@@ -23,7 +24,7 @@ module Mcp
         required: ["program_uuid", "name", "repeat_count"]
       )
 
-      def self.call(program_uuid:, name:, repeat_count:, server_context:, reps: nil, description: nil, video_url: nil, position: nil)
+      def self.call(program_uuid:, name:, repeat_count:, server_context:, reps: nil, duration_seconds: nil, description: nil, video_url: nil, position: nil)
         safely do
           user = current_user(server_context)
           program = find_program!(user, program_uuid)
@@ -38,14 +39,16 @@ module Mcp
               max_position + 1
             end
 
-            exercise = program.exercises.create!({
+            create_attrs = normalize_effort!({
               name: name,
               repeat_count: repeat_count,
               reps: reps,
+              duration_seconds: duration_seconds,
               description: description,
               video_url: video_url,
               position: target
             }.compact)
+            exercise = program.exercises.create!(create_attrs)
           end
 
           text_response(JSON.pretty_generate(program_summary(program.reload)))

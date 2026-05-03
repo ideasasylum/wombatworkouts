@@ -23,7 +23,8 @@ class Workout < ApplicationRecord
 
   # JSON serialization for exercises_data
   # Each exercise instance contains: id (UUID), name, description, video_url,
-  # position, repeat_instance, repeat_total, completed (boolean), skipped (boolean)
+  # reps, duration_seconds, position, repeat_instance, repeat_total,
+  # completed (boolean), skipped (boolean)
   serialize :exercises_data, coder: JSON
 
   # Initialize workout from a program by snapshotting and unrolling exercises
@@ -42,6 +43,8 @@ class Workout < ApplicationRecord
           "name" => exercise.name,
           "description" => exercise.description,
           "video_url" => exercise.video_url,
+          "reps" => exercise.reps,
+          "duration_seconds" => exercise.duration_seconds,
           "position" => position,
           "repeat_instance" => repeat_index + 1,
           "repeat_total" => repeat_count,

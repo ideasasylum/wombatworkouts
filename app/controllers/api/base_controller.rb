@@ -33,12 +33,21 @@ module Api
       }
     end
 
+    # If the caller passed duration_seconds but not reps, clear reps so the
+    # column default doesn't trip the model's exactly-one validation.
+    def normalize_effort(attrs)
+      h = attrs.to_h.symbolize_keys
+      h[:reps] = nil if h[:duration_seconds].present? && !h.key?(:reps)
+      h
+    end
+
     def exercise_json(exercise)
       {
         id: exercise.id,
         name: exercise.name,
         repeat_count: exercise.repeat_count,
         reps: exercise.reps,
+        duration_seconds: exercise.duration_seconds,
         description: exercise.description,
         video_url: exercise.video_url,
         position: exercise.position

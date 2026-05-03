@@ -64,6 +64,24 @@ class WorkoutTest < ActiveSupport::TestCase
     assert_equal program.title, workout.program_title
   end
 
+  test "initialize_from_program snapshots reps and duration_seconds" do
+    user = users(:john)
+    program = programs(:strength_program)
+    program.exercises.destroy_all
+    program.exercises.create!(name: "Push-ups", repeat_count: 2, position: 1, reps: 12)
+    program.exercises.create!(name: "Plank", repeat_count: 2, position: 2, reps: nil, duration_seconds: 45)
+
+    workout = Workout.new(user: user, program: program)
+    workout.initialize_from_program(program)
+
+    pushups = workout.exercises_data.first
+    plank = workout.exercises_data.last
+    assert_equal 12, pushups["reps"]
+    assert_nil pushups["duration_seconds"]
+    assert_nil plank["reps"]
+    assert_equal 45, plank["duration_seconds"]
+  end
+
   # Test 2: Finding current incomplete exercise
   test "current_exercise returns first incomplete exercise" do
     user = users(:john)
