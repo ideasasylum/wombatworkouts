@@ -1,0 +1,41 @@
+# Substring keyword → [exercise_category, exercise_name] from the FIT profile.
+# Lookup is case-insensitive; first matching key (in file order) wins.
+# Anything not matched falls back to category=unknown(65534) + an EXERCISE_TITLE
+# message bearing the user's free-text name.
+# Categories/names verified against @garmin/fitsdk 21.202 profile.js.
+
+bench press:    [0, 0]   # benchPress / alternatingDumbbellChestPressOnSwissBall
+push up:        [22, 0]  # pushUp / chestPressWithBand
+push-up:        [22, 0]
+pushup:         [22, 0]
+calf raise:     [1, 0]   # calfRaise / 3WayCalfRaise
+deadlift:       [8, 0]   # deadlift / barbellDeadlift
+squat:          [28, 6]  # squat / barbellBackSquat
+lunge:          [17, 0]  # lunge / overheadLunge
+plank:          [19, 0]  # plank / 79090Plank
+crunch:         [6, 0]   # crunch
+sit up:         [27, 0]  # sitUp
+sit-up:         [27, 0]
+situp:          [27, 0]
+pull up:        [21, 0]  # pullUp
+pull-up:        [21, 0]
+pullup:         [21, 0]
+chin up:        [21, 0]
+row:            [23, 0]  # row
+shoulder press: [24, 0]  # shoulderPress
+shrug:          [26, 0]  # shrug
+curl:           [7, 0]   # curl / alternatingDumbbellBicepsCurl
+lateral raise:  [14, 0]  # lateralRaise
+leg curl:       [15, 0]  # legCurl
+leg raise:      [16, 0]  # legRaise
+hip raise:      [10, 0]  # hipRaise
+glute bridge:   [10, 0]  # hipRaise — closest match
+flye:           [9, 0]   # flye
+fly:            [9, 0]
+hyperextension: [13, 0]  # hyperextension
+triceps:        [30, 0]  # tricepsExtension
+tricep:         [30, 0]
+core:           [5, 0]   # core
+warm up:        [31, 0]  # warmUp
+warm-up:        [31, 0]
+warmup:         [31, 0]

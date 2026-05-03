@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: library_exercises
+#
+#  id          :integer          not null, primary key
+#  description :text
+#  name        :string           not null
+#  video_url   :string
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  user_id     :integer          not null
+#
 require "test_helper"
 
 class LibraryExerciseTest < ActiveSupport::TestCase

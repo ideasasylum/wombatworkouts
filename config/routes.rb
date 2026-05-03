@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   resources :programs do
     member do
       post :duplicate  # Task Group 2.3: Add duplicate route
+      get :export_garmin
     end
     resources :exercises, only: [:new, :create], shallow: true do
       member do
