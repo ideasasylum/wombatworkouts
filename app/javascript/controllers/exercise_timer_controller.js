@@ -17,11 +17,22 @@ export default class extends Controller {
     this.state = "idle"
     this.tickHandle = null
     this.deadline = null
+    this.wakeLock = null
+    // Browsers release the wake lock when the page is hidden; re-acquire when
+    // it comes back into view, but only if the timer is still running.
+    this.handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && this.state === "running") {
+        this.#requestWakeLock()
+      }
+    }
+    document.addEventListener("visibilitychange", this.handleVisibilityChange)
     this.render()
   }
 
   disconnect() {
     this.#stopTick()
+    this.#releaseWakeLock()
+    document.removeEventListener("visibilitychange", this.handleVisibilityChange)
   }
 
   start() {
@@ -39,6 +50,7 @@ export default class extends Controller {
     this.remainingMs = Math.max(0, this.deadline - Date.now())
     this.state = "paused"
     this.#stopTick()
+    this.#releaseWakeLock()
     this.render()
   }
 
@@ -47,6 +59,7 @@ export default class extends Controller {
     this.remainingMs = this.secondsValue * 1000
     this.deadline = null
     this.#stopTick()
+    this.#releaseWakeLock()
     this.displayTarget.classList.remove("text-green-600")
     this.render()
   }
@@ -55,6 +68,7 @@ export default class extends Controller {
     this.deadline = Date.now() + this.remainingMs
     this.state = "running"
     this.#startTick()
+    this.#requestWakeLock()
     this.render()
   }
 
@@ -76,6 +90,7 @@ export default class extends Controller {
       this.remainingMs = 0
       this.state = "finished"
       this.#stopTick()
+      this.#releaseWakeLock()
       this.#cue()
       this.render()
       return
@@ -123,6 +138,30 @@ export default class extends Controller {
       osc.onended = () => ctx.close()
     } catch (_e) {
       // Audio is a nice-to-have; ignore failures (e.g. autoplay restrictions).
+    }
+  }
+
+  async #requestWakeLock() {
+    if (!("wakeLock" in navigator)) return
+    if (this.wakeLock) return
+    try {
+      this.wakeLock = await navigator.wakeLock.request("screen")
+      this.wakeLock.addEventListener("release", () => {
+        this.wakeLock = null
+      })
+    } catch (_e) {
+      // Wake lock is a hint; ignore failures (e.g. low battery, permissions).
+    }
+  }
+
+  async #releaseWakeLock() {
+    if (!this.wakeLock) return
+    const lock = this.wakeLock
+    this.wakeLock = null
+    try {
+      await lock.release()
+    } catch (_e) {
+      // ignore
     }
   }
 }
