@@ -1,4 +1,7 @@
 class SessionsController < ApplicationController
+  # Prevent caching of authentication pages and responses
+  before_action :set_no_cache_headers
+
   # Signup (Registration) Actions
   def new_signup
     # Render the signup form
@@ -163,6 +166,12 @@ class SessionsController < ApplicationController
   end
 
   private
+
+  def set_no_cache_headers
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+  end
 
   def generate_registration_challenge(email)
     # Generate a temporary webauthn_id for the challenge

@@ -1,8 +1,8 @@
 // Service Worker for Wombat Workouts PWA
 // Handles push notifications and basic offline functionality
 
-const CACHE_VERSION = 'v1';
-const CACHE_NAME = `fitorforget-${CACHE_VERSION}`;
+const CACHE_VERSION = 'v2';
+const CACHE_NAME = `wombat-workouts-${CACHE_VERSION}`;
 const OFFLINE_URL = '/offline.html';
 
 // Assets to cache for offline functionality
