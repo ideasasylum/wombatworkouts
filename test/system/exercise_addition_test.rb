@@ -21,7 +21,7 @@ class ExerciseAdditionTest < ApplicationSystemTestCase
     # Fill exercise form with unique name
     exercise1_name = "Test Exercise 1 #{Time.current.to_i}"
     fill_in "Exercise Name", with: exercise1_name
-    fill_in "Repeat Count", with: "3"
+    fill_in "Sets", with: "3"
     # Note: Description field uses OverType editor, skipping for now as it's optional
 
     # Submit form (button text is "Add Exercise")
@@ -36,7 +36,7 @@ class ExerciseAdditionTest < ApplicationSystemTestCase
 
     exercise2_name = "Test Exercise 2 #{Time.current.to_i}"
     fill_in "Exercise Name", with: exercise2_name
-    fill_in "Repeat Count", with: "5"
+    fill_in "Sets", with: "5"
 
     # Submit form
     click_button "Add Exercise"
@@ -71,7 +71,7 @@ class ExerciseAdditionTest < ApplicationSystemTestCase
     # Fill exercise form with unique name
     exercise1_name = "Test Exercise 1 #{Time.current.to_i}"
     fill_in "Exercise Name", with: exercise1_name
-    fill_in "Repeat Count", with: "3"
+    fill_in "Sets", with: "3"
 
     # Submit form (button text is "Add Exercise")
     click_button "Add Exercise"
@@ -85,7 +85,7 @@ class ExerciseAdditionTest < ApplicationSystemTestCase
 
     exercise2_name = "Test Exercise 2 #{Time.current.to_i}"
     fill_in "Exercise Name", with: exercise2_name
-    fill_in "Repeat Count", with: "5"
+    fill_in "Sets", with: "5"
 
     # Submit form
     click_button "Add Exercise"

@@ -2,15 +2,17 @@
 #
 # Table name: exercises
 #
-#  id           :integer          not null, primary key
-#  description  :text
-#  name         :string           not null
-#  position     :integer          not null
-#  repeat_count :integer          not null
-#  video_url    :string
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
-#  program_id   :integer          not null
+#  id               :integer          not null, primary key
+#  description      :text
+#  duration_seconds :integer
+#  name             :string           not null
+#  position         :integer          not null
+#  repeat_count     :integer          not null
+#  reps             :integer          default(1)
+#  video_url        :string
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  program_id       :integer          not null
 #
 require "test_helper"
 
@@ -67,5 +69,39 @@ class ExerciseTest < ActiveSupport::TestCase
   test "should have markdown description" do
     exercise = @program.exercises.create!(name: "Sit-ups", repeat_count: 50, position: 1, description: "Focus on form and breathing")
     assert_equal "Focus on form and breathing", exercise.description
+  end
+
+  test "is valid with duration_seconds and no reps" do
+    exercise = @program.exercises.build(name: "Plank", repeat_count: 3, position: 1, reps: nil, duration_seconds: 45)
+    assert exercise.valid?, exercise.errors.full_messages.to_sentence
+  end
+
+  test "rejects both reps and duration_seconds" do
+    exercise = @program.exercises.build(name: "Plank", repeat_count: 3, position: 1, reps: 10, duration_seconds: 30)
+    assert_not exercise.valid?
+    assert_includes exercise.errors[:base], "cannot set both reps and duration"
+  end
+
+  test "rejects neither reps nor duration_seconds" do
+    exercise = @program.exercises.build(name: "Plank", repeat_count: 3, position: 1, reps: nil, duration_seconds: nil)
+    assert_not exercise.valid?
+    assert_includes exercise.errors[:base], "must set either reps or duration"
+  end
+
+  test "duration_seconds upper bound" do
+    exercise = @program.exercises.build(name: "Plank", repeat_count: 1, position: 1, reps: nil, duration_seconds: Exercise::MAX_DURATION_SECONDS + 1)
+    assert_not exercise.valid?
+    assert exercise.errors[:duration_seconds].any?
+  end
+
+  test "effort_label for reps" do
+    assert_equal "1 rep", @program.exercises.build(reps: 1).effort_label
+    assert_equal "10 reps", @program.exercises.build(reps: 10).effort_label
+  end
+
+  test "effort_label for durations" do
+    assert_equal "45s", @program.exercises.build(reps: nil, duration_seconds: 45).effort_label
+    assert_equal "1m 30s", @program.exercises.build(reps: nil, duration_seconds: 90).effort_label
+    assert_equal "2m", @program.exercises.build(reps: nil, duration_seconds: 120).effort_label
   end
 end

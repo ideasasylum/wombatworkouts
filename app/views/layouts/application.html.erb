@@ -16,6 +16,9 @@
     <%# PWA manifest for installable apps %>
     <link rel="manifest" href="/manifest.json">
 
+    <%# VAPID public key for push notifications %>
+    <meta name="vapid-public-key" content="<%= ENV['VAPID_PUBLIC_KEY'] %>">
+
     <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png">
     <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png">
     <link rel="icon" href="/icon.png" type="image/png">
@@ -57,10 +60,13 @@
     </script>
   </head>
 
-  <body style="background-color: rgb(237, 242, 247);"
-        data-controller="<%= logged_in? ? 'session-health' : '' %>"
-        data-session-health-is-authenticated-value="<%= logged_in? %>"
-        data-session-health-user-data-value="<%= logged_in? ? { userId: current_user.id, email: current_user.email }.to_json : '{}' %>">
+  <body style="background-color: rgb(237, 242, 247);">
+    <% if Rails.env.development? && session[:dev_signed_in] %>
+      <div class="fixed top-0 inset-x-0 z-50 bg-yellow-400 text-yellow-900 text-center text-xs font-semibold py-1 border-b border-yellow-600">
+        DEV SESSION — signed in via /__dev/signin as <%= current_user&.email %>
+      </div>
+    <% end %>
+
     <%= render 'shared/navbar' if logged_in? %>
 
     <%= render 'shared/flash_messages' %>

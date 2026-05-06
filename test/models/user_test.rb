@@ -4,6 +4,7 @@
 #
 #  id          :integer          not null, primary key
 #  email       :string           not null
+#  timezone    :string
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  webauthn_id :string           not null
@@ -57,15 +58,35 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  # NEW TEST: Email normalization callback
   test "should normalize email to lowercase before validation" do
     user = User.create!(email: "Test@Example.COM")
     assert_equal "test@example.com", user.email
   end
 
-  # NEW TEST: Email normalization with whitespace
   test "should strip whitespace from email before validation" do
     user = User.create!(email: "  test@example.com  ")
     assert_equal "test@example.com", user.email
+  end
+
+  test "should allow valid timezone" do
+    user = User.create!(email: "test@example.com", timezone: "America/New_York")
+    assert user.valid?
+    assert_equal "America/New_York", user.timezone
+  end
+
+  test "should reject invalid timezone" do
+    user = User.new(email: "test@example.com", timezone: "Invalid/Timezone")
+    assert_not user.valid?
+    assert_includes user.errors[:timezone], "is not a valid timezone"
+  end
+
+  test "should have many push_subscriptions" do
+    user = User.create!(email: "test@example.com")
+    assert_respond_to user, :push_subscriptions
+  end
+
+  test "should have many reminders" do
+    user = User.create!(email: "test@example.com")
+    assert_respond_to user, :reminders
   end
 end

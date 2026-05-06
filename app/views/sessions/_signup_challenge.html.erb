@@ -32,7 +32,12 @@
           <p class="text-base font-medium text-[rgb(26,26,26)]" data-webauthn-target="errorMessage"></p>
         </div>
       </div>
-      <div class="mt-4 text-center">
+      <div class="mt-4 flex flex-col items-center gap-2">
+        <button type="button"
+                data-action="click->webauthn#retry"
+                class="text-base text-[rgb(26,26,26)] hover:opacity-75 font-medium underline">
+          Try again
+        </button>
         <a href="<%= signup_path %>" class="text-base text-[rgb(26,26,26)] hover:opacity-75 font-medium underline">
           Try a different email
         </a>

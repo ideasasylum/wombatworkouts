@@ -31,7 +31,7 @@ threads threads_count, threads_count
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
 if ENV.fetch("RAILS_ENV", "development") == "development"
   # SSL configuration for local development
-  ssl_bind "0.0.0.0", "3000", {
+  ssl_bind "0.0.0.0", ENV.fetch("PORT", 3000), {
     key: File.join(Dir.pwd, "local.wombatworkouts.com-key.pem"),
     cert: File.join(Dir.pwd, "local.wombatworkouts.com.pem"),
     verify_mode: "none"

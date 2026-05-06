@@ -38,5 +38,11 @@ module WombatWorkouts
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # Configure Postmark for email delivery
+    config.action_mailer.delivery_method = :postmark
+    config.action_mailer.postmark_settings = {
+      api_token: ENV["POSTMARK_API_TOKEN"]
+    }
   end
 end

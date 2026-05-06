@@ -15,6 +15,7 @@ class Program < ApplicationRecord
   belongs_to :user
   has_many :exercises, -> { order(position: :asc) }, dependent: :destroy
   has_many :workouts, dependent: :nullify  # Workouts persist as snapshots even if program is deleted
+  has_many :reminders, dependent: :destroy
 
   # Validations
   validates :title, presence: true
@@ -46,6 +47,8 @@ class Program < ApplicationRecord
         duplicated_program.exercises.create!(
           name: exercise.name,
           repeat_count: exercise.repeat_count,
+          reps: exercise.reps,
+          duration_seconds: exercise.duration_seconds,
           description: exercise.description,
           video_url: exercise.video_url,
           position: exercise.position

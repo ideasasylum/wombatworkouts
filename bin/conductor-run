@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+
+PORT="${CONDUCTOR_PORT:-${PORT:-3000}}"
+URL="https://local.wombatworkouts.com:${PORT}"
+
+mkdir -p .context
+echo "$URL" > .context/dev-url.txt
+
+printf '\n\033[1;32m==> Dev server: %s\033[0m\n\n' "$URL"
+
+export PORT
+exec mise run dev

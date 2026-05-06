@@ -22,6 +22,10 @@
         <div class="hidden md:flex items-center space-x-6">
           <%= link_to "Dashboard", dashboard_path, class: "text-button text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)] transition-colors" %>
           <%= link_to "Programs", programs_path, class: "text-button text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)] transition-colors" %>
+          <%= link_to "Exercises", library_exercises_path, class: "text-button text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)] transition-colors" %>
+          <%= link_to reminders_path, class: "inline-flex items-center text-button text-[rgb(26,26,26)] hover:text-[rgb(107,114,128)] transition-colors", "aria-label": "Reminders" do %>
+            <%= render "shared/icons/bell", class: "w-5 h-5" %>
+          <% end %>
         </div>
       </div>
 
@@ -29,12 +33,12 @@
       <div class="flex items-center space-x-4">
         <!-- Desktop User Email and Logout (hidden on mobile) -->
         <div class="hidden md:flex items-center space-x-4">
-          <span class="text-sm text-[rgb(107,114,128)]"><%= current_user.email %></span>
+          <%= link_to current_user.email, personal_access_tokens_path, class: "text-sm text-[rgb(107,114,128)] hover:text-[rgb(26,26,26)] transition-colors" %>
           <%= button_to "Log out",
             logout_path,
             method: :delete,
             class: "inline-flex items-center px-4 py-2 border border-[rgb(204,204,204)] text-button text-[rgb(26,26,26)] bg-white hover:bg-gray-50 rounded-sm transition-colors min-h-[44px]",
-            form: { data: { controller: "logout", action: "submit->logout#submit", turbo_confirm: "Are you sure you want to log out?" } } %>
+            form: { data: { turbo_confirm: "Are you sure you want to log out?" } } %>
         </div>
 
         <!-- Mobile Hamburger Menu Icon (visible below md:768px) -->
@@ -73,16 +77,21 @@
         <div class="flex-1 overflow-y-auto p-4 space-y-2">
           <%= link_to "Dashboard", dashboard_path, class: "block text-body text-[rgb(26,26,26)] hover:bg-gray-100 p-3 rounded-sm", data: { action: "click->mobile-menu#close" } %>
           <%= link_to "Programs", programs_path, class: "block text-body text-[rgb(26,26,26)] hover:bg-gray-100 p-3 rounded-sm", data: { action: "click->mobile-menu#close" } %>
+          <%= link_to "Exercises", library_exercises_path, class: "block text-body text-[rgb(26,26,26)] hover:bg-gray-100 p-3 rounded-sm", data: { action: "click->mobile-menu#close" } %>
+          <%= link_to reminders_path, class: "flex items-center text-body text-[rgb(26,26,26)] hover:bg-gray-100 p-3 rounded-sm", data: { action: "click->mobile-menu#close" } do %>
+            <%= render "shared/icons/bell", class: "w-5 h-5 mr-2" %>
+            <span>Reminders</span>
+          <% end %>
         </div>
 
         <!-- User info and logout -->
         <div class="border-t border-[rgb(204,204,204)] p-4 space-y-4">
-          <div class="text-sm text-[rgb(107,114,128)]"><%= current_user.email %></div>
+          <%= link_to current_user.email, personal_access_tokens_path, class: "block text-sm text-[rgb(107,114,128)] hover:text-[rgb(26,26,26)]", data: { action: "click->mobile-menu#close" } %>
           <%= button_to "Log out",
             logout_path,
             method: :delete,
             class: "w-full inline-flex items-center justify-center px-4 py-3 border border-[rgb(204,204,204)] text-button text-[rgb(26,26,26)] bg-white hover:bg-gray-50 rounded-sm transition-colors min-h-[44px]",
-            form: { data: { controller: "logout", action: "submit->logout#submit", turbo_confirm: "Are you sure you want to log out?" } } %>
+            form: { data: { turbo_confirm: "Are you sure you want to log out?" } } %>
         </div>
       </div>
     </div>

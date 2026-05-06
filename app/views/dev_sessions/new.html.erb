@@ -1,0 +1,31 @@
+<% content_for :title, "Dev Sign-In" %>
+
+<%= render "shared/page_container" do %>
+  <div class="max-w-md mx-auto py-8">
+    <h1 class="text-2xl font-bold mb-2">Dev Sign-In</h1>
+    <p class="text-sm text-gray-600 mb-6">
+      Development-only. Routes mounted only when <code>Rails.env.development?</code>
+      and accept loopback connections only.
+    </p>
+
+    <% if @emails.empty? %>
+      <div class="rounded border border-yellow-300 bg-yellow-50 p-4 text-sm text-yellow-900">
+        <p class="font-semibold mb-2">No allowlisted emails</p>
+        <p>Set <code>DEV_SIGNIN_EMAILS</code> in your environment (comma-separated) and restart the server. Example:</p>
+        <pre class="mt-2 bg-yellow-100 rounded px-2 py-1 text-xs overflow-x-auto">DEV_SIGNIN_EMAILS=alice@example.com,bob@example.com</pre>
+      </div>
+    <% else %>
+      <ul class="space-y-2">
+        <% @emails.each do |email| %>
+          <li>
+            <%= form_with url: dev_signin_path, method: :post, local: true, class: "flex items-center justify-between border rounded px-3 py-2 bg-white" do |f| %>
+              <%= f.hidden_field :email, value: email %>
+              <span class="text-sm text-gray-800"><%= email %></span>
+              <%= f.submit "Sign in", class: "bg-amber-700 text-white text-sm font-semibold rounded px-3 py-1 hover:bg-amber-800 cursor-pointer" %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+<% end %>

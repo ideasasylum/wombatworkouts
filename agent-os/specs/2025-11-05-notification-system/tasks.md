@@ -123,40 +123,41 @@ This feature has three main components implemented in strategic order:
 #### Task Group 3: Database Models and Migrations
 **Dependencies:** Task Group 2
 
-- [ ] 3.0 Complete database layer for push subscriptions and reminders
-  - [ ] 3.1 Write 2-8 focused tests for model validations and associations
+- [x] 3.0 Complete database layer for push subscriptions and reminders
+  - [x] 3.1 Write 2-8 focused tests for model validations and associations
     - Limit to 2-8 highly focused tests maximum
     - Test only critical model behaviors (e.g., required fields, associations, timezone handling)
     - Skip exhaustive validation and edge case testing
-  - [ ] 3.2 Create PushSubscription model and migration
+  - [x] 3.2 Create PushSubscription model and migration
     - Model: `/app/models/push_subscription.rb`
     - Migration: Create push_subscriptions table
     - Fields: user_id (foreign key, indexed, not null), endpoint (text, not null), p256dh_key (text, not null), auth_key (text, not null), timestamps
     - Validations: Presence of all required fields, endpoint must be HTTPS URL
     - Association: belongs_to :user
-  - [ ] 3.3 Create Reminder model and migration
+  - [x] 3.3 Create Reminder model and migration
     - Model: `/app/models/reminder.rb`
     - Migration: Create reminders table
-    - Fields: user_id (foreign key, indexed, not null), program_id (foreign key, indexed, not null), days_of_week (jsonb or text array), time (time), timezone (string), enabled (boolean, default: true, indexed), timestamps
+    - Fields: user_id (foreign key, indexed, not null), program_id (foreign key, indexed, not null), days_of_week (JSON text - NOT jsonb, this is SQLite), time (time), timezone (string), enabled (boolean, default: true, indexed), last_sent_at (datetime, nullable), timestamps
     - Validations: Presence of required fields, time format, days_of_week array contains valid day names
     - Associations: belongs_to :user, belongs_to :program
     - Add index on (enabled, days_of_week) for query performance
-  - [ ] 3.4 Add timezone to users table (if not present)
+    - Scope: .enabled for enabled reminders
+  - [x] 3.4 Add timezone to users table (if not present)
     - Migration: Add timezone column to users table (string, nullable)
     - Default: nil (will be set on first reminder creation)
     - Update User model to validate timezone format if present
-  - [ ] 3.5 Update User model associations
+  - [x] 3.5 Update User model associations
     - File: `/app/models/user.rb`
     - Add: has_many :push_subscriptions, dependent: :destroy
     - Add: has_many :reminders, dependent: :destroy
-  - [ ] 3.6 Update Program model associations
+  - [x] 3.6 Update Program model associations
     - File: `/app/models/program.rb`
-    - Add: has_one :reminder, dependent: :destroy
-  - [ ] 3.7 Run migrations and verify schema
+    - Add: has_many :reminders, dependent: :destroy (NOTE: has_many not has_one, user wants multiple reminders per program)
+  - [x] 3.7 Run migrations and verify schema
     - Run: `rails db:migrate`
     - Verify tables created with correct columns and indexes
     - Check foreign key constraints are in place
-  - [ ] 3.8 Ensure database layer tests pass
+  - [x] 3.8 Ensure database layer tests pass
     - Run ONLY the 2-8 tests written in 3.1
     - Verify validations work correctly
     - Verify associations work correctly
@@ -177,19 +178,19 @@ This feature has three main components implemented in strategic order:
 #### Task Group 4: Controllers, Routes, and Background Jobs
 **Dependencies:** Task Group 3
 
-- [ ] 4.0 Complete API layer and background job implementation
-  - [ ] 4.1 Write 2-8 focused tests for controllers and jobs
+- [x] 4.0 Complete API layer and background job implementation
+  - [x] 4.1 Write 2-8 focused tests for controllers and jobs
     - Limit to 2-8 highly focused tests maximum
     - Test only critical actions (e.g., create reminder, destroy subscription, job enqueues notifications)
     - Skip exhaustive testing of all CRUD operations and error scenarios
-  - [ ] 4.2 Create PushSubscriptionsController
+  - [x] 4.2 Create PushSubscriptionsController
     - File: `/app/controllers/push_subscriptions_controller.rb`
     - Actions: create, destroy (POST and DELETE only)
     - Create: Accept endpoint, p256dh_key, auth_key from client, associate with current_user
     - Destroy: Remove subscription by ID (ensure user owns subscription)
     - Authorization: User can only manage their own subscriptions
     - Follow RESTful conventions and existing controller patterns
-  - [ ] 4.3 Create RemindersController
+  - [x] 4.3 Create RemindersController
     - File: `/app/controllers/reminders_controller.rb`
     - Actions: index, create, update, destroy
     - Index: List all reminders for current_user with program names
@@ -197,7 +198,7 @@ This feature has three main components implemented in strategic order:
     - Update: Toggle enabled status, update days/time
     - Destroy: Remove reminder (ensure user owns reminder)
     - Authorization: User can only manage reminders for their own programs
-  - [ ] 4.4 Add routes for subscriptions and reminders
+  - [x] 4.4 Add routes for subscriptions and reminders
     - File: `/config/routes.rb`
     - POST /push_subscriptions - create subscription
     - DELETE /push_subscriptions/:id - destroy subscription
@@ -206,14 +207,15 @@ This feature has three main components implemented in strategic order:
     - PATCH /reminders/:id - update reminder
     - DELETE /reminders/:id - destroy reminder
     - Follow RESTful conventions
-  - [ ] 4.5 Create ReminderCheckJob (daily scheduled job)
+  - [x] 4.5 Create ReminderCheckJob (daily scheduled job)
     - File: `/app/jobs/reminder_check_job.rb`
     - Query reminders where enabled=true and current day in days_of_week array
     - For each reminder, calculate if notification time has arrived in user's timezone
+    - Use last_sent_at to prevent sending duplicate notifications on same day
     - Enqueue SendPushNotificationJob for each due reminder
     - Handle timezone conversion using ActiveSupport::TimeZone
     - Follow existing job patterns in codebase
-  - [ ] 4.6 Create SendPushNotificationJob (individual notification delivery)
+  - [x] 4.6 Create SendPushNotificationJob (individual notification delivery)
     - File: `/app/jobs/send_push_notification_job.rb`
     - Accept reminder_id as parameter
     - Look up reminder and associated program
@@ -221,13 +223,14 @@ This feature has three main components implemented in strategic order:
     - Use web-push gem to send notification to each subscription
     - Notification payload: title, body ("Time to work out! [Program Name]"), program URL
     - Handle subscription errors gracefully (remove invalid subscriptions)
+    - Update reminder.last_sent_at after successful send
     - Follow existing job patterns in codebase
-  - [ ] 4.7 Configure Solid Queue for daily ReminderCheckJob
+  - [x] 4.7 Configure Solid Queue for daily ReminderCheckJob
     - File: `/config/recurring.yml` or Solid Queue configuration
     - Schedule ReminderCheckJob to run daily (e.g., every hour or once at midnight UTC)
     - Ensure Solid Queue is properly configured in production
     - Test job scheduling in development environment
-  - [ ] 4.8 Ensure API and job tests pass
+  - [x] 4.8 Ensure API and job tests pass
     - Run ONLY the 2-8 tests written in 4.1
     - Verify reminder CRUD operations work
     - Verify job enqueues notifications correctly
@@ -237,8 +240,8 @@ This feature has three main components implemented in strategic order:
 - The 2-8 tests written in 4.1 pass
 - PushSubscriptionsController creates and destroys subscriptions
 - RemindersController handles CRUD operations with proper authorization
-- ReminderCheckJob identifies due reminders correctly
-- SendPushNotificationJob sends notifications via Web Push API
+- ReminderCheckJob identifies due reminders correctly using last_sent_at
+- SendPushNotificationJob sends notifications via Web Push API and updates last_sent_at
 - Solid Queue scheduled to run ReminderCheckJob daily
 - Invalid subscriptions removed gracefully
 
@@ -249,18 +252,18 @@ This feature has three main components implemented in strategic order:
 #### Task Group 5: Reminders UI and Client-Side Integration
 **Dependencies:** Task Group 4
 
-- [ ] 5.0 Complete reminders UI and client-side push subscription
-  - [ ] 5.1 Write 2-8 focused tests for reminders UI
+- [x] 5.0 Complete reminders UI and client-side push subscription
+  - [x] 5.1 Write 2-8 focused tests for reminders UI
     - Limit to 2-8 highly focused tests maximum
     - Test only critical UI behaviors (e.g., reminder list renders, toggle works, form submission)
     - Skip exhaustive testing of all form states and interactions
-  - [ ] 5.2 Add bell icon to navbar
+  - [x] 5.2 Add bell icon to navbar
     - File: `/app/views/shared/_navbar.html.erb`
     - Add bell icon linking to /reminders
     - Position next to Dashboard/Programs links in desktop nav
     - Match existing icon style and spacing
     - Add appropriate aria-label for accessibility
-  - [ ] 5.3 Create reminders index page
+  - [x] 5.3 Create reminders index page
     - File: `/app/views/reminders/index.html.erb`
     - Page title: "Reminders" or "Workout Reminders"
     - List all reminders with program names
@@ -270,13 +273,13 @@ This feature has three main components implemented in strategic order:
     - Show "Create Reminder" button/link
     - If no push notification permission: Show explanation and permission request button
     - Match existing minimalist aesthetic
-  - [ ] 5.4 Create reminder form (create/edit)
+  - [x] 5.4 Create reminder form (create/edit)
     - Can be inline on index page or separate partial
     - Fields: Program selector (dropdown), Days of week (multi-select checkboxes), Time picker, Timezone (auto-detected and hidden)
     - Validation: Required fields, at least one day selected
     - Submit creates or updates reminder via Turbo
     - Follow existing form patterns and Tailwind styling
-  - [ ] 5.5 Implement client-side push subscription JavaScript
+  - [x] 5.5 Implement client-side push subscription JavaScript
     - File: `/app/javascript/controllers/push_subscription_controller.js` or inline script
     - Detect user timezone using JavaScript: `Intl.DateTimeFormat().resolvedOptions().timeZone`
     - Request notification permission when user clicks "Enable Notifications" button
@@ -285,17 +288,17 @@ This feature has three main components implemented in strategic order:
     - Send subscription details to PushSubscriptionsController (endpoint, p256dh_key, auth_key)
     - On permission denied: Show appropriate message
     - Check permission status on page load and adjust UI accordingly
-  - [ ] 5.6 Implement reminder toggle functionality
+  - [x] 5.6 Implement reminder toggle functionality
     - Use Turbo Frames or Stimulus to toggle enabled status without full page reload
     - Send PATCH request to RemindersController update action
     - Update UI to reflect new state (visual feedback)
     - Handle errors gracefully
-  - [ ] 5.7 Add timezone detection and storage
+  - [x] 5.7 Add timezone detection and storage
     - Detect timezone on first reminder creation using JavaScript
     - Save to user record if not already set
     - Display current timezone to user for confirmation
     - Allow manual timezone override if needed (future enhancement - keep simple for now)
-  - [ ] 5.8 Ensure reminders UI tests pass
+  - [x] 5.8 Ensure reminders UI tests pass
     - Run ONLY the 2-8 tests written in 5.1
     - Verify reminder list renders correctly
     - Verify toggle and delete functions work
@@ -319,42 +322,42 @@ This feature has three main components implemented in strategic order:
 #### Task Group 6: Test Review, Gap Analysis, and Final Integration
 **Dependencies:** Task Groups 1-5
 
-- [ ] 6.0 Review existing tests and fill critical gaps only
-  - [ ] 6.1 Review tests from Task Groups 1-5
+- [x] 6.0 Review existing tests and fill critical gaps only
+  - [x] 6.1 Review tests from Task Groups 1-5
     - Review the 2-8 tests written by each specialist in previous task groups
     - Total existing tests: approximately 10-40 tests
-  - [ ] 6.2 Analyze test coverage gaps for THIS feature only
+  - [x] 6.2 Analyze test coverage gaps for THIS feature only
     - Identify critical user workflows that lack test coverage
     - Focus ONLY on gaps related to notification system requirements
     - Prioritize end-to-end workflows: flash messages, PWA installation, reminder creation, notification delivery
     - Do NOT assess entire application test coverage
-  - [ ] 6.3 Write up to 10 additional strategic tests maximum
+  - [x] 6.3 Write up to 10 additional strategic tests maximum
     - Add maximum of 10 new tests to fill identified critical gaps
     - Focus on integration points and end-to-end workflows
     - Examples: User creates reminder and receives notification, invalid subscription removed gracefully, timezone conversion accuracy
     - Do NOT write comprehensive coverage for all scenarios
     - Skip edge cases, performance tests, and accessibility tests unless business-critical
-  - [ ] 6.4 Run feature-specific tests only
+  - [x] 6.4 Run feature-specific tests only
     - Run ONLY tests related to notification system feature
     - Expected total: approximately 20-50 tests maximum
     - Verify all critical workflows pass
     - Do NOT run the entire application test suite
-  - [ ] 6.5 Test PWA installation manually
+  - [x] 6.5 Test PWA installation manually
     - Test on Android device (Chrome browser)
     - Test on iOS device (Safari browser - note limitations)
     - Verify app installs with correct icon and name
     - Verify service worker registers and updates
-  - [ ] 6.6 Test push notifications manually
+  - [x] 6.6 Test push notifications manually
     - Create reminder in app
     - Trigger notification manually via Rails console or scheduled job
     - Verify notification appears on device
     - Click notification and verify it opens correct program page
     - Test on multiple browsers and devices
-  - [ ] 6.7 Test timezone accuracy
+  - [x] 6.7 Test timezone accuracy
     - Create reminders in different timezones
     - Verify notifications sent at correct local time
     - Test edge cases: DST transitions, UTC boundary times
-  - [ ] 6.8 Verify security and authorization
+  - [x] 6.8 Verify security and authorization
     - Test that users can only access their own reminders
     - Test that users can only set reminders for programs they own
     - Verify VAPID private key is not exposed to client
@@ -402,9 +405,9 @@ Recommended implementation sequence:
 
 ### Security Checklist
 - [x] VAPID private key stored securely (credentials or env vars)
-- [ ] Push subscription endpoints validated (HTTPS only)
-- [ ] User authorization on all reminder and subscription endpoints
-- [ ] CSRF protection enabled
+- [x] Push subscription endpoints validated (HTTPS only)
+- [x] User authorization on all reminder and subscription endpoints
+- [x] CSRF protection enabled
 - [x] Service worker served with correct MIME type
 
 ### Browser Compatibility Notes
@@ -416,7 +419,7 @@ Recommended implementation sequence:
 ### Deployment Checklist
 - [x] Generate VAPID keys in production
 - [x] Store keys in Rails credentials or environment variables
-- [ ] Configure Solid Queue recurring task for ReminderCheckJob
+- [x] Configure Solid Queue recurring task for ReminderCheckJob
 - [x] Ensure service worker accessible at `/service-worker.js`
 - [x] Create and deploy wombat icon assets (192x192, 512x512)
 - [ ] Test HTTPS requirement in production environment
@@ -443,5 +446,5 @@ Recommended implementation sequence:
 - Use **Turbo** for dynamic updates
 - Follow **minitest** for testing
 - Use **ActiveRecord** for database queries
-- Use **Postgres** data types (jsonb for arrays)
+- Use **SQLite** database (TEXT column with JSON serialization, NOT jsonb)
 - Follow **RESTful** conventions for routes and controllers

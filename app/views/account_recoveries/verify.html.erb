@@ -1,0 +1,53 @@
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full">
+    <%# Header %>
+    <div class="text-center mb-8">
+      <h1 class="text-h1 text-[rgb(26,26,26)] mb-2">
+        Enter Recovery Code
+      </h1>
+      <p class="text-body text-[rgb(107,114,128)]">
+        Check your email for a 6-digit code
+      </p>
+    </div>
+
+    <%# White card container for form %>
+    <div class="bg-white rounded-sm shadow-sm p-8">
+      <%= form_with url: confirm_account_recovery_path, method: :post, class: "space-y-6" do |f| %>
+        <%# Code input field %>
+        <div>
+          <%= f.text_field :code,
+                required: true,
+                autofocus: true,
+                placeholder: "000000",
+                maxlength: 6,
+                pattern: "[0-9]{6}",
+                inputmode: "numeric",
+                class: "form-input text-center text-2xl tracking-widest font-mono",
+                value: @code %>
+        </div>
+
+        <%# Info text %>
+        <p class="text-sm text-[rgb(107,114,128)]">
+          The code expires in 15 minutes.
+        </p>
+
+        <%# Action buttons %>
+        <div class="space-y-3">
+          <%= render 'shared/button',
+                text: 'Verify Code',
+                type: :primary,
+                html_options: {
+                  onclick: "this.closest('form').requestSubmit(); return false;",
+                  class: 'w-full'
+                } %>
+
+          <%= render 'shared/button',
+                text: 'Request New Code',
+                url: new_account_recovery_path,
+                type: :secondary,
+                html_options: { class: 'w-full' } %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

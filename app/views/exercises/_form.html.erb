@@ -1,4 +1,7 @@
 <%= form_with model: exercise, url: exercise.new_record? ? program_exercises_path(program) : exercise_path(exercise), class: "space-y-4" do |f| %>
+  <% if exercise.new_record? && local_assigns[:from_library] %>
+    <%= hidden_field_tag :from_library, "1" %>
+  <% end %>
   <% if exercise.errors.any? %>
     <div class="rounded-sm bg-red-50 p-4 border border-red-200">
       <div class="flex">
@@ -34,18 +37,83 @@
     <% end %>
   </div>
 
-  <div>
-    <%= f.label :repeat_count, "Repeat Count", class: "form-label" %>
-    <%= f.number_field :repeat_count,
-          required: true,
-          min: 1,
-          inputmode: "numeric",
-          pattern: "[0-9]*",
-          placeholder: "e.g., 10, 15, 20",
-          class: "form-input #{exercise.errors[:repeat_count].any? ? 'border-red-300' : ''}" %>
-    <% if exercise.errors[:repeat_count].any? %>
-      <p class="mt-1 text-sm text-red-600">
-        <%= exercise.errors.full_messages_for(:repeat_count).join(', ') %>
+  <% effort_mode = exercise.duration? ? "time" : "reps" %>
+  <div data-controller="effort-toggle" data-effort-toggle-mode-value="<%= effort_mode %>">
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= f.label :repeat_count, "Sets", class: "form-label" %>
+        <%= f.number_field :repeat_count,
+              required: true,
+              min: 1,
+              inputmode: "numeric",
+              pattern: "[0-9]*",
+              placeholder: "e.g., 3",
+              class: "form-input #{exercise.errors[:repeat_count].any? ? 'border-red-300' : ''}" %>
+        <% if exercise.errors[:repeat_count].any? %>
+          <p class="mt-1 text-sm text-red-600">
+            <%= exercise.errors.full_messages_for(:repeat_count).join(', ') %>
+          </p>
+        <% end %>
+      </div>
+
+      <div>
+        <span class="form-label">Effort per set</span>
+        <div class="inline-flex border border-[rgb(26,26,26)] rounded-sm overflow-hidden mt-1" role="group" aria-label="Effort type">
+          <button type="button"
+                  data-effort-toggle-target="repsButton"
+                  data-action="click->effort-toggle#selectReps"
+                  class="px-4 py-2 text-sm font-medium border-r border-[rgb(26,26,26)] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+            Reps
+          </button>
+          <button type="button"
+                  data-effort-toggle-target="timeButton"
+                  data-action="click->effort-toggle#selectTime"
+                  class="px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">
+            Time
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4 mt-4">
+      <div></div>
+      <div data-effort-toggle-target="repsField">
+        <%= f.label :reps, "Reps per set", class: "form-label" %>
+        <%= f.number_field :reps,
+              data: { effort_toggle_target: "repsInput" },
+              min: 1,
+              inputmode: "numeric",
+              pattern: "[0-9]*",
+              placeholder: "e.g., 10",
+              value: exercise.reps,
+              class: "form-input #{exercise.errors[:reps].any? ? 'border-red-300' : ''}" %>
+        <% if exercise.errors[:reps].any? %>
+          <p class="mt-1 text-sm text-red-600">
+            <%= exercise.errors.full_messages_for(:reps).join(', ') %>
+          </p>
+        <% end %>
+      </div>
+      <div data-effort-toggle-target="timeField">
+        <%= f.label :duration_seconds, "Seconds per set", class: "form-label" %>
+        <%= f.number_field :duration_seconds,
+              data: { effort_toggle_target: "timeInput" },
+              min: 1,
+              inputmode: "numeric",
+              pattern: "[0-9]*",
+              placeholder: "e.g., 45",
+              value: exercise.duration_seconds,
+              class: "form-input #{exercise.errors[:duration_seconds].any? ? 'border-red-300' : ''}" %>
+        <% if exercise.errors[:duration_seconds].any? %>
+          <p class="mt-1 text-sm text-red-600">
+            <%= exercise.errors.full_messages_for(:duration_seconds).join(', ') %>
+          </p>
+        <% end %>
+      </div>
+    </div>
+
+    <% if exercise.errors[:base].any? %>
+      <p class="mt-2 text-sm text-red-600">
+        <%= exercise.errors.full_messages_for(:base).join(', ') %>
       </p>
     <% end %>
   </div>

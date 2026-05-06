@@ -25,6 +25,15 @@ gem "jbuilder"
 # WebAuthn passwordless authentication
 gem "webauthn"
 
+# Model Context Protocol server (for AI integration)
+gem "mcp"
+
+# OAuth 2.1 provider for the MCP server (used by claude.ai's remote connector)
+gem "doorkeeper", "~> 5.8"
+
+# Throttle abusive requests (DCR endpoint, etc); reads from Rails.cache
+gem "rack-attack"
+
 # Markdown rendering
 gem "redcarpet"
 
@@ -33,6 +42,9 @@ gem "activerecord-session_store"
 
 # Web Push notifications with VAPID
 gem "web-push", "~> 3.0"
+
+# Email delivery with Postmark
+gem "postmark-rails"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[windows jruby]

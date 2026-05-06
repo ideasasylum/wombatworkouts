@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_10_27_142303) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_03_210424) do
+  create_table "account_recoveries", force: :cascade do |t|
+    t.string "code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "used_at"
+    t.integer "user_id", null: false
+    t.index ["code"], name: "index_account_recoveries_on_code", unique: true
+    t.index ["user_id"], name: "index_account_recoveries_on_user_id"
+  end
+
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -64,14 +75,88 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_142303) do
   create_table "exercises", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.text "description"
+    t.integer "duration_seconds"
     t.string "name", null: false
     t.integer "position", null: false
     t.integer "program_id", null: false
     t.integer "repeat_count", null: false
+    t.integer "reps", default: 1
     t.datetime "updated_at", null: false
     t.string "video_url"
     t.index ["program_id", "position"], name: "index_exercises_on_program_id_and_position"
     t.index ["program_id"], name: "index_exercises_on_program_id"
+  end
+
+  create_table "library_exercises", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.string "video_url"
+    t.index ["user_id"], name: "index_library_exercises_on_user_id"
+  end
+
+  create_table "oauth_access_grants", force: :cascade do |t|
+    t.integer "application_id", null: false
+    t.string "code_challenge"
+    t.string "code_challenge_method"
+    t.datetime "created_at", null: false
+    t.integer "expires_in", null: false
+    t.text "redirect_uri", null: false
+    t.string "resource"
+    t.integer "resource_owner_id", null: false
+    t.datetime "revoked_at"
+    t.string "scopes", default: "", null: false
+    t.string "token", null: false
+    t.index ["application_id"], name: "index_oauth_access_grants_on_application_id"
+    t.index ["resource_owner_id"], name: "index_oauth_access_grants_on_resource_owner_id"
+    t.index ["token"], name: "index_oauth_access_grants_on_token", unique: true
+  end
+
+  create_table "oauth_access_tokens", force: :cascade do |t|
+    t.integer "application_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "expires_in"
+    t.string "previous_refresh_token", default: "", null: false
+    t.string "refresh_token"
+    t.string "resource"
+    t.integer "resource_owner_id"
+    t.datetime "revoked_at"
+    t.string "scopes"
+    t.string "token", null: false
+    t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
+    t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
+    t.index ["resource"], name: "index_oauth_access_tokens_on_resource"
+    t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
+    t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
+  end
+
+  create_table "oauth_applications", force: :cascade do |t|
+    t.string "client_name"
+    t.boolean "confidential", default: true, null: false
+    t.datetime "created_at", null: false
+    t.boolean "created_via_dcr", default: false, null: false
+    t.string "name", null: false
+    t.text "redirect_uri", null: false
+    t.string "scopes", default: "", null: false
+    t.string "secret"
+    t.string "uid", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_via_dcr"], name: "index_oauth_applications_on_created_via_dcr"
+    t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
+  end
+
+  create_table "personal_access_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "last_used_at"
+    t.string "name", null: false
+    t.datetime "revoked_at"
+    t.string "token_digest", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["token_digest"], name: "index_personal_access_tokens_on_token_digest", unique: true
+    t.index ["user_id"], name: "index_personal_access_tokens_on_user_id"
   end
 
   create_table "programs", force: :cascade do |t|
@@ -83,6 +168,31 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_142303) do
     t.string "uuid", null: false
     t.index ["user_id"], name: "index_programs_on_user_id"
     t.index ["uuid"], name: "index_programs_on_uuid", unique: true
+  end
+
+  create_table "push_subscriptions", force: :cascade do |t|
+    t.text "auth_key", null: false
+    t.datetime "created_at", null: false
+    t.text "endpoint", null: false
+    t.text "p256dh_key", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_push_subscriptions_on_user_id"
+  end
+
+  create_table "reminders", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "days_of_week", null: false
+    t.boolean "enabled", default: true, null: false
+    t.datetime "last_sent_at"
+    t.integer "program_id", null: false
+    t.time "time", null: false
+    t.string "timezone", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["enabled"], name: "index_reminders_on_enabled"
+    t.index ["program_id"], name: "index_reminders_on_program_id"
+    t.index ["user_id"], name: "index_reminders_on_user_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -97,6 +207,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_142303) do
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
+    t.string "timezone"
     t.datetime "updated_at", null: false
     t.string "webauthn_id", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -116,11 +227,21 @@ ActiveRecord::Schema[8.1].define(version: 2025_10_27_142303) do
     t.index ["user_id"], name: "index_workouts_on_user_id"
   end
 
+  add_foreign_key "account_recoveries", "users"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "credentials", "users", on_delete: :cascade
   add_foreign_key "exercises", "programs", on_delete: :cascade
+  add_foreign_key "library_exercises", "users"
+  add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_access_grants", "users", column: "resource_owner_id"
+  add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_access_tokens", "users", column: "resource_owner_id"
+  add_foreign_key "personal_access_tokens", "users", on_delete: :cascade
   add_foreign_key "programs", "users", on_delete: :cascade
+  add_foreign_key "push_subscriptions", "users", on_delete: :cascade
+  add_foreign_key "reminders", "programs", on_delete: :cascade
+  add_foreign_key "reminders", "users", on_delete: :cascade
   add_foreign_key "workouts", "programs", on_delete: :nullify
   add_foreign_key "workouts", "users", on_delete: :cascade
 end
