@@ -15,7 +15,8 @@ class WorkoutHeatmapTest < ActiveSupport::TestCase
   test "the last cell is today's date" do
     heatmap = WorkoutHeatmap.new(@user, today: @today)
     last_week = heatmap.weeks.last
-    assert_equal @today, last_week[@today.wday == 0 ? 6 : @today.wday - 1].date
+    monday_indexed_wday = (@today.wday == 0) ? 6 : @today.wday - 1
+    assert_equal @today, last_week[monday_indexed_wday].date
     assert last_week.find { |cell| cell.date == @today }.today
   end
 
@@ -146,7 +147,7 @@ class WorkoutHeatmapTest < ActiveSupport::TestCase
   test "legend lists only programs visible in window, in creation order" do
     older_program = @user.programs.create!(title: "First")
     newer_program = @user.programs.create!(title: "Second")
-    unused_program = @user.programs.create!(title: "Unused")
+    @user.programs.create!(title: "Unused")
 
     @user.workouts.create!(
       program: newer_program,
