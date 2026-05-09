@@ -31,5 +31,7 @@ class DashboardController < ApplicationController
 
     # Check if user has more than 5 workouts
     @has_more_workouts = current_user.workouts.count > 5
+
+    @heatmap = WorkoutHeatmap.new(current_user)
   end
 end

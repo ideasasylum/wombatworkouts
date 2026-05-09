@@ -55,6 +55,11 @@
       <% end %>
     </section>
 
+    <!-- Activity Heatmap (if any completed workouts exist) -->
+    <% if @heatmap.any_workouts? %>
+      <%= render "shared/workout_heatmap", heatmap: @heatmap %>
+    <% end %>
+
     <!-- Recent Workouts Section (if any exist) -->
     <% if @workouts.any? %>
       <section class="mt-12">
