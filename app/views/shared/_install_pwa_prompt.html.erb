@@ -1,0 +1,38 @@
+<%
+# Install PWA Prompt
+#
+# Renders a card with an "Install app" button that opens the pwa-install
+# web component's dialog. Hidden automatically when the app is already
+# installed (running in standalone display mode).
+%>
+<div class="mb-6 hidden" data-controller="pwa-install">
+  <div class="bg-white border border-[rgb(204,204,204)] rounded-sm p-4 flex items-start gap-4 sm:items-center">
+    <div class="flex-shrink-0">
+      <%= image_tag "/icon-192.png", class: "w-10 h-10 rounded-sm", alt: "" %>
+    </div>
+    <div class="flex-1 min-w-0">
+      <h3 class="text-button text-[rgb(26,26,26)] mb-1">Install Wombat Workouts</h3>
+      <p class="text-sm text-[rgb(107,114,128)] mb-3 sm:mb-0">
+        Add the app to your home screen for quick access and reliable notifications.
+      </p>
+      <div class="sm:hidden">
+        <%= render 'shared/button',
+          text: 'Install app',
+          type: :primary,
+          size: :small,
+          html_options: {
+            data: { action: "click->pwa-install#show" }
+          } %>
+      </div>
+    </div>
+    <div class="hidden sm:block flex-shrink-0">
+      <%= render 'shared/button',
+        text: 'Install app',
+        type: :primary,
+        size: :small,
+        html_options: {
+          data: { action: "click->pwa-install#show" }
+        } %>
+    </div>
+  </div>
+</div>

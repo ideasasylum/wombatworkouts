@@ -30,6 +30,7 @@
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
     <script src="https://unpkg.com/overtype/dist/overtype.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@khmyznikov/pwa-install@0.6.3/dist/pwa-install.bundle.js"></script>
 
     <%# Service Worker Registration %>
     <script>
@@ -74,5 +75,14 @@
     <main class="<%= logged_in? ? 'mt-16' : '' %>">
       <%= yield %>
     </main>
+
+    <%# PWA install web component — invisible until showDialog() is called %>
+    <pwa-install
+      manifest-url="/manifest.json"
+      name="Wombat Workouts"
+      description="Track your workout programs and never forget to exercise"
+      disable-screenshots
+      disable-screenshots-apple
+      disable-screenshots-chromium></pwa-install>
   </body>
 </html>

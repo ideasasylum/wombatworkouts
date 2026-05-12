@@ -2,6 +2,8 @@
   <h1 class="text-h1 text-[rgb(26,26,26)] mb-2">Personal settings</h1>
   <p class="text-body text-[rgb(107,114,128)] mb-8">Signed in as <%= current_user.email %>.</p>
 
+  <%= render 'shared/install_pwa_prompt' %>
+
   <section>
     <div class="flex items-center justify-between mb-3">
       <h2 class="text-h2 text-[rgb(26,26,26)]">Connect with an AI</h2>
